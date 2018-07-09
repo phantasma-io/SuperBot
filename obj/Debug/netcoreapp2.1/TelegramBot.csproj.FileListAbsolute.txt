@@ -1,0 +1,11 @@
+/home/hex/Projects/TelegramBot/bin/Debug/netcoreapp2.1/TelegramBot.deps.json
+/home/hex/Projects/TelegramBot/bin/Debug/netcoreapp2.1/TelegramBot.runtimeconfig.json
+/home/hex/Projects/TelegramBot/bin/Debug/netcoreapp2.1/TelegramBot.runtimeconfig.dev.json
+/home/hex/Projects/TelegramBot/bin/Debug/netcoreapp2.1/TelegramBot.dll
+/home/hex/Projects/TelegramBot/bin/Debug/netcoreapp2.1/TelegramBot.pdb
+/home/hex/Projects/TelegramBot/obj/Debug/netcoreapp2.1/TelegramBot.csprojAssemblyReference.cache
+/home/hex/Projects/TelegramBot/obj/Debug/netcoreapp2.1/TelegramBot.csproj.CoreCompileInputs.cache
+/home/hex/Projects/TelegramBot/obj/Debug/netcoreapp2.1/TelegramBot.AssemblyInfoInputs.cache
+/home/hex/Projects/TelegramBot/obj/Debug/netcoreapp2.1/TelegramBot.AssemblyInfo.cs
+/home/hex/Projects/TelegramBot/obj/Debug/netcoreapp2.1/TelegramBot.dll
+/home/hex/Projects/TelegramBot/obj/Debug/netcoreapp2.1/TelegramBot.pdb

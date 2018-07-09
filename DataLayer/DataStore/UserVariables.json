@@ -1,0 +1,16 @@
+{
+    "variables": [
+        {
+            "name": "bot state",
+            "saveMethod": -1,
+            "isDictionary": false,
+            "startValue": ""
+        },
+        {
+            "name": "whitelist",
+            "saveMethod": 0,
+            "isDictionary": true,
+            "startValue": "Pending"
+        }
+    ]
+}

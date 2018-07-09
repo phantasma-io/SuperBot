@@ -1,0 +1,24 @@
+{
+    "behaviourKey label":{
+        "reactions": [
+            {
+                "reactionType": 0,
+                "value": "Shut up asshole :("
+            },
+            {
+                "reactionType": 1,
+                "value": {
+                    "variable": "bot state",
+                    "value": "Idle"
+                }
+            },
+            {
+                "reactionType": 2,
+                "value": {
+                    "variable":"whitelist",
+                    "value":"Accepted"
+                }
+            }
+        ]
+    }
+}

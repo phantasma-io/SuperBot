@@ -1,0 +1,25 @@
+{
+    "debug behaviourKey label":{
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": 0,
+                "value": "[a-c]",
+                "modifier": 0,
+                "subgroup": ""
+            },
+            {
+                "triggerType": 0,
+                "value": "\\d",
+                "modifier": 0,
+                "subgroup": "sub"
+            },
+            {
+                "triggerType": 0,
+                "value": "\\s",
+                "modifier": 1,
+                "subgroup": "sub"
+            }
+        ]
+    }
+}
