@@ -9,22 +9,22 @@ namespace MiddlemanLayer {
     /// As platform agnostic as possible (i.e. telegram, discord, etc.)
     /// </summary>
     public class TriggerInputData {
-
+        
         readonly public TriggerType type;
         readonly public object data;
+        readonly public long senderId;
+        readonly public long chatId;
 
-        public TriggerInputData(TriggerType type, object data){
+        public TriggerInputData(TriggerType type, object data, long senderId, long chatId){
             this.type = type;
             this.data = data;
+            this.senderId = senderId;
+            this.chatId = chatId;
         }
     }
     
     public class ReactionOutputMessage {
-
-        /// <summary>
-        /// We might have to add the sender/chatId's to the <TriggerInputData> for when we implement bot capabilities
-        /// to maintain a conversation with a specific user.. but for now this will suffice
-        /// </summary>
+        
         public long senderId;
         public long chatId;
 

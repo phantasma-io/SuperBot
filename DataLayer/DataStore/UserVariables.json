@@ -7,10 +7,28 @@
             "startValue": ""
         },
         {
-            "name": "whitelist",
+            "name": "whitelist email",
             "saveMethod": 0,
             "isDictionary": true,
-            "startValue": "Pending"
+            "startValue": ""
+        },
+        {
+            "name": "whitelist address",
+            "saveMethod": 0,
+            "isDictionary": true,
+            "startValue": ""
+        },
+        {
+            "name": "whitelist name",
+            "saveMethod": 0,
+            "isDictionary": true,
+            "startValue": ""
+        },
+        {
+            "name": "whitelist status",
+            "saveMethod": 0,
+            "isDictionary": true,
+            "startValue": ""
         }
     ]
 }

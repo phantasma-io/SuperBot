@@ -35,11 +35,14 @@ namespace CommsLayer
             Bot.StopReceiving();
         }
 /* */
-        private async void BotOnMessageReceived(object sender, MessageEventArgs args)
+        private void BotOnMessageReceived(object sender, MessageEventArgs args)
         {
             try
             {
                 var message = args.Message;
+                var userId = message.From.Id;
+                var chatId = message.Chat.Id;
+
                 if (message == null) return;
 
                 switch (message.Type)
@@ -54,19 +57,18 @@ namespace CommsLayer
                         }*/
 
                     case MessageType.Text:
-                        var triggerMessage = new TriggerInputData(TriggerType.Text, message.Text);
+                        var triggerMessage = new TriggerInputData(TriggerType.Text, message.Text, userId, chatId);
                         var matchedTriggerLabel = behaviourManager.EvaluateTriggers(triggerMessage);
-
-                        if(matchedTriggerLabel == "")
-                            return;
 
                         Console.WriteLine(matchedTriggerLabel);
 
                         var reaction = behaviourManager.GetReaction(matchedTriggerLabel);
 
-                        reaction.SetReplyDestination(message.From.Id, message.Chat.Id);
-
-                        ParseReaction(reaction);
+                        if(reaction != null)
+                        {
+                            reaction.SetReplyDestination(userId, chatId);
+                            ParseReaction(reaction);
+                        }
                         
                     break;
 

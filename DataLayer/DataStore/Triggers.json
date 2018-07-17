@@ -1,24 +1,72 @@
 {
-    "debug behaviourKey label":{
+    "whitelist start":{
         "privateTrigger": true,
         "triggers": [
             {
                 "triggerType": 0,
-                "value": "[a-c]",
+                "value": "/whitelist",
                 "modifier": 0,
                 "subgroup": ""
-            },
+            }
+        ]
+    },
+    "whitelist email": {
+        "privateTrigger": true,
+        "triggers": [
             {
-                "triggerType": 0,
-                "value": "\\d",
+                "triggerType": 2,
+                "value": {
+                    "variable": "whitelist status",
+                    "value": "need email"
+                },
                 "modifier": 0,
-                "subgroup": "sub"
+                "subgroup": "1"
             },
             {
                 "triggerType": 0,
-                "value": "\\s",
-                "modifier": 1,
-                "subgroup": "sub"
+                "value": "\\S*@\\S*",
+                "modifier": 0,
+                "subgroup": "2"
+            }
+        ]
+    },
+    "whitelist address": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": 2,
+                "value": {
+                    "variable": "whitelist status",
+                    "value": "need address"
+                },
+                "modifier": 0,
+                "subgroup": "1"
+            },
+            {
+                "triggerType": 0,
+                "value": "\\S*",
+                "modifier": 0,
+                "subgroup": "2"
+            }
+        ]
+    },
+    "whitelist name": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": 2,
+                "value": {
+                    "variable": "whitelist status",
+                    "value": "need name"
+                },
+                "modifier": 0,
+                "subgroup": "1"
+            },
+            {
+                "triggerType": 0,
+                "value": "\\S*",
+                "modifier": 0,
+                "subgroup": "2"
             }
         ]
     }

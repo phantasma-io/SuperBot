@@ -35,6 +35,8 @@ namespace MiddlemanLayer {
 
         public ReactionOutputMessage GetReaction(string behaviourKey)
         {
+            if(behaviourKey == "")
+                return null;
             return reactionGroups[behaviourKey].SelectReaction();
         }
 

@@ -19,17 +19,38 @@ namespace DataLayer
             {
                 case TriggerType.Text:
                     string text = (string) msg.data;
-                    return ParseTextTrigger(text);
+                    string query = (string) value;
+                    return ParseTextTrigger(text, query);
+
+                case TriggerType.DictionaryVariable:
+                    var dictionary = (DictionaryVariableDBO) value; 
+                    return ParseDictionaryTrigger(dictionary, msg);
+
                 
                 default:
                     return false;
             }
         }
 
-        private bool ParseTextTrigger(string text)
+        private bool ParseDictionaryTrigger(DictionaryVariableDBO dictionary, TriggerInputData msg)
+        {
+            switch(modifier)
+            {
+                case (int) DictionaryVariableTriggerModifiers.MatchValues:
+                    string dictionaryName = dictionary.variable;
+                    string userId = msg.senderId.ToString();
+                    string value = dictionary.value;
+
+                    return UserVariablesSingleton.DoesDictionaryVariableMatch(dictionaryName, userId, value);
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool ParseTextTrigger(string text, string query)
         {
             //var query = Regex.Unescape(value);
-            var query = value;
             Match match = Regex.Match(text, query);
 
             return match.Success;

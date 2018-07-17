@@ -1,23 +1,104 @@
 {
-    "behaviourKey label":{
+    "whitelist start":{
         "reactions": [
             {
                 "reactionType": 0,
-                "value": "Shut up asshole :("
-            },
-            {
-                "reactionType": 1,
-                "value": {
-                    "variable": "bot state",
-                    "value": "Idle"
-                }
+                "modifier": 0,
+                "value": "What is your email address?",
+                "subgroup": "1"
             },
             {
                 "reactionType": 2,
+                "modifier": 0,
                 "value": {
-                    "variable":"whitelist",
-                    "value":"Accepted"
-                }
+                    "variable": "whitelist status",
+                    "value": "need email"
+                },
+                "subgroup": "2"
+            }
+        ]
+    },
+    "whitelist email":{
+        "reactions": [
+            {
+                "reactionType": 2,
+                "modifier": 1,
+                "value": {
+                    "variable": "whitelist email",
+                    "value": null
+                },
+                "subgroup": "1"
+            },
+            {
+                "reactionType": 0,
+                "modifier": 0,
+                "value": "What is your wallet public address?",
+                "subgroup":"2"
+            },
+            {
+                "reactionType": 2,
+                "modifier": 0,
+                "value": {
+                    "variable": "whitelist status",
+                    "value": "need address"
+                },
+                "subgroup": "3"
+            }
+        ]
+    },
+    "whitelist address":{
+        "reactions": [
+            {
+                "reactionType": 2,
+                "modifier": 1,
+                "value": {
+                    "variable": "whitelist address",
+                    "value": null
+                },
+                "subgroup":"1"
+            },
+            {
+                "reactionType": 0,
+                "modifier": 0,
+                "value": "What is your full name?",
+                "subgroup":"2"
+            },
+            {
+                "reactionType": 2,
+                "modifier": 0,
+                "value": {
+                    "variable": "whitelist status",
+                    "value": "need name"
+                },
+                "subgroup":"3"
+            }
+        ]
+    },
+    "whitelist name":{
+        "reactions": [
+            {
+                "reactionType": 2,
+                "modifier": 1,
+                "value": {
+                    "variable": "whitelist name",
+                    "value":null
+                },
+                "subgroup":"1"
+            },
+            {
+                "reactionType": 0,
+                "modifier": 0,
+                "value": "Whitelisting process complete. To the moooon",
+                "subgroup":"2"
+            },
+            {
+                "reactionType": 2,
+                "modifier": 0,
+                "value": {
+                    "variable": "whitelist status",
+                    "value": "complete"
+                },
+                "subgroup":"3"
             }
         ]
     }

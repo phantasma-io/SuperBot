@@ -4,7 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 
 namespace DataLayer
-{
+{   
     public static class DataUtils
     {
         public enum Files{
@@ -51,5 +51,10 @@ namespace DataLayer
             
         }
 
+    }
+
+    public class DictionaryVariableDBO {
+        public string variable;
+        public string value;
     }
 }

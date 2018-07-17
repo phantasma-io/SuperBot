@@ -31,6 +31,12 @@ A _Trigger_ is defined as follows:
 
 TriggerTypes and TriggerModifiers, along with their meanings, are defined in TriggerEnums.cs
 
+Trigger Type | Meaning
+---------|----------
+ 0 | A simple text reply trigger
+ 1 | Global User Variable trigger
+ 2 | Dictionary User Variable trigger
+
 #### Trigger Groups and Sub-groups
 
 Each trigger has a group and a sub-group.
@@ -162,8 +168,8 @@ saveMethod | Meaning
 
 #### Dictionary User Variables
 
- If variable is a dictionary, it gets added to a Dictionary of Dictionaries, where other dictionary user variables are also stored. These are meant for variables you want to store per user, i.e. each user's kyc state.
+ If variable is a dictionary, it gets added to a Dictionary of Dictionaries, representing a list for variables you want to store per user, i.e. each user's kyc state.
 
 In case these are saved to file, the file name will be _variable name_.
 
-#### Single User Variables
+#### Global User Variables

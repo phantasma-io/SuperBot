@@ -19,16 +19,26 @@ namespace DataLayer{
             }
         }
 
-        public static bool AddKey(string variableName, string key, string value = null)
+        public static bool AddDictionaryVariable(string dictionaryName, string key, string value = null)
         {
-            if(!dictionaryVariables.ContainsKey(variableName))
+            if(!dictionaryVariables.ContainsKey(dictionaryName))
                 return false;   
 
-            DictionaryVariable dictionary = dictionaryVariables[variableName];
+            DictionaryVariable dictionary = dictionaryVariables[dictionaryName];
 
             value = value == null ? dictionary.startValue : value;
             
             return dictionary.items.TryAdd(key, value);
+        }
+
+        public static bool DoValuesMatch(string dictionaryName, string key, string value)
+        {
+            if(!dictionaryVariables.ContainsKey(dictionaryName))
+                return false;   
+
+            DictionaryVariable dictionary = dictionaryVariables[dictionaryName];
+
+            return dictionary.items[key] == value;
         }
 
         public static bool UpdateKey(string variableName, string key, string value)
@@ -46,12 +56,12 @@ namespace DataLayer{
             return true;
         }
 
-        public static bool DeleteKey(string variableName, string key)
+        public static bool DeleteKey(string dictionaryName, string key)
         {
-            if(!dictionaryVariables.ContainsKey(variableName))
+            if(!dictionaryVariables.ContainsKey(dictionaryName))
                 return false;   
 
-            DictionaryVariable dictionary = dictionaryVariables[variableName];
+            DictionaryVariable dictionary = dictionaryVariables[dictionaryName];
 
             if(!dictionary.items.ContainsKey(key))
                 return false;
