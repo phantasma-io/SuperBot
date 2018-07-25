@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace DataLayer {
 
@@ -7,5 +8,14 @@ namespace DataLayer {
         public int saveMethod;
         public bool isDictionary;
         public string startValue;
+    }
+
+    public class UserVariableDBO {
+        List<UserVariable> variables {get; set;}
+    }
+
+    public class DictionaryVariableDBO {
+        public string variable;
+        public string value;
     }
 }

@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using MiddlemanLayer;
+using DataLayer;
+using Newtonsoft.Json;
 
 /// <summary>
 /// TODO
@@ -10,14 +13,141 @@ using MiddlemanLayer;
 /// </summary>
 
 namespace DataLayer{
-    public partial class ReactionGroup {
-        static Random rand = new Random();
-        public ReactionOutputMessage SelectReaction()
+
+    public partial class Reaction
+    {
+        public ReactionOutputMessage React(CommsLayerMessage msg)
         {
-            var chosenIndex = rand.Next(0,reactions.Count - 1);
+            ReactionOutputMessage output = null;
+            
+            switch(reactionType)
+            {
+                case ReactionType.Text:
+                    output = new ReactionOutputMessage(this);
+                    break;
+
+                case ReactionType.DictionaryVariable:
+                    ParseDictionaryReaction(msg);
+                    break;
+
+                case ReactionType.Special:
+                    ParseSpecialReaction(msg);
+                    break;
+            }
+
+            return output;
+        }
+
+        private void ParseSpecialReaction(CommsLayerMessage msg)
+        {
+            switch(modifier)
+            {
+                case (int) SpecialReactionModifiers.CreateCSV:
+                    var csvMetadata = JsonConvert.DeserializeObject<CsvMetadataDBO>(value.ToString());
+                    UserVariablesSingleton.DumpToCSV(csvMetadata);
+                    break;
+            }
+        }
+
+        private void ParseDictionaryReaction(CommsLayerMessage clm)
+        {
+            var key = clm.senderId.ToString();
+            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(value.ToString());
+            switch(modifier)
+            {
+                case (int) DictionaryVariableReactionModifiers.SavePresetValue:
+                    UserVariablesSingleton.SetDictionaryVariable(dv.variable, key, dv.value);
+                break;
+
+                case (int) DictionaryVariableReactionModifiers.SaveUserMessage:
+                    UserVariablesSingleton.SetDictionaryVariable(dv.variable, key, clm.message);
+                break;
+
+                case (int) DictionaryVariableReactionModifiers.DeleteEntry:
+                    UserVariablesSingleton.DeleteDictionaryVariable(dv.variable, key);
+                break;
+            }
+        }
+    }
+
+    public class ReactionSubgroup
+    {
+        private List<Reaction> reactions;
+
+        static Random rand = new Random();
+
+
+        public ReactionOutputMessage SelectAndApplyReaction(CommsLayerMessage msg) 
+        {
+            var reaction = SelectReaction();
+
+            return reaction.React(msg);
+        }
+
+        private Reaction SelectReaction()
+        {
+            var chosenIndex = 0;
+
+            if(reactions.Count > 1)
+                chosenIndex = rand.Next(0,reactions.Count - 1);
+                
             var reaction = reactions[chosenIndex];
 
-            return new ReactionOutputMessage(reaction.reactionType, reaction.value);
+            return reaction;
+        }
+
+        public void AddReaction(Reaction reaction)
+        {
+            if (reactions == null)
+                reactions = new List<Reaction>();
+
+            reactions.Add(reaction);
+        }
+    }
+
+     public partial class ReactionGroup
+    {
+        public Dictionary<string, ReactionSubgroup> subgroups = null;
+
+        public List<ReactionOutputMessage> React(CommsLayerMessage msg)
+        {
+            if (subgroups == null)
+                AssembleSubgroups();
+
+            var reactionOutputs = new List<ReactionOutputMessage>();
+
+            foreach (var keypair in subgroups)
+            {
+                var subgroup = keypair.Value;
+
+                var output = subgroup.SelectAndApplyReaction(msg);
+
+                if (output != null)
+                    reactionOutputs.Add(output);
+            }
+
+            return reactionOutputs;
+        }
+
+        /// <summary>
+        /// Organizes the reaction list obtained from JSON into each of their respective subgroups, for easier group and subgroup evaluation
+        /// </summary>
+        private void AssembleSubgroups()
+        {
+            subgroups = new Dictionary<string, ReactionSubgroup>();
+
+            foreach (var reaction in reactions)
+            {
+                var key = reaction.subgroup;
+
+                if (subgroups.ContainsKey(key) == false)
+                    subgroups.Add(key, new ReactionSubgroup());
+
+                ReactionSubgroup subgroup;
+                subgroups.TryGetValue(key, out subgroup);
+
+                subgroup.AddReaction(reaction);
+            }
         }
     }
 }

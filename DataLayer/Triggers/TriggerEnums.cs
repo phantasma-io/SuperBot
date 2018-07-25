@@ -15,7 +15,7 @@ namespace DataLayer {
     }
 
     public enum GlobalVariableTriggerModifiers {
-        Default
+        MatchValues
     }
 
     public enum DictionaryVariableTriggerModifiers {

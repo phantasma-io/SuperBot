@@ -27,15 +27,15 @@ A _Trigger_ is defined as follows:
     "modifier": TriggerModifierEnum,
     "subgroup": "string"
 }
-```
+```k
 
 TriggerTypes and TriggerModifiers, along with their meanings, are defined in TriggerEnums.cs
 
 Trigger Type | Meaning
 ---------|----------
  0 | A simple text reply trigger
- 1 | Global User Variable trigger
- 2 | Dictionary User Variable trigger
+ 1 | Global User-Variable trigger
+ 2 | Dictionary User-Variable trigger
 
 #### Trigger Groups and Sub-groups
 

@@ -2,44 +2,44 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MiddlemanLayer;
+using Newtonsoft.Json;
 
 namespace DataLayer
 {
 
     public partial class Trigger
     {
-        public bool Eval(TriggerInputData msg)
+        public bool Eval(CommsLayerMessage msg)
         {
             return ParseTriggerInput(msg);
         }
 
-        private bool ParseTriggerInput(TriggerInputData msg)
+        private bool ParseTriggerInput(CommsLayerMessage msg)
         {
-            switch(msg.type)
+            switch(triggerType)
             {
                 case TriggerType.Text:
-                    string text = (string) msg.data;
-                    string query = (string) value;
-                    return ParseTextTrigger(text, query);
+                    return ParseTextTrigger(msg);
 
                 case TriggerType.DictionaryVariable:
-                    var dictionary = (DictionaryVariableDBO) value; 
-                    return ParseDictionaryTrigger(dictionary, msg);
+                     
+                    return ParseDictionaryTrigger(msg);
 
-                
                 default:
                     return false;
             }
         }
 
-        private bool ParseDictionaryTrigger(DictionaryVariableDBO dictionary, TriggerInputData msg)
+        private bool ParseDictionaryTrigger(CommsLayerMessage msg)
         {
+            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(value.ToString());
+
             switch(modifier)
             {
                 case (int) DictionaryVariableTriggerModifiers.MatchValues:
-                    string dictionaryName = dictionary.variable;
+                    string dictionaryName = dv.variable;
                     string userId = msg.senderId.ToString();
-                    string value = dictionary.value;
+                    string value = dv.value;
 
                     return UserVariablesSingleton.DoesDictionaryVariableMatch(dictionaryName, userId, value);
 
@@ -48,12 +48,23 @@ namespace DataLayer
             }
         }
 
-        private bool ParseTextTrigger(string text, string query)
+        private bool ParseTextTrigger(CommsLayerMessage msg)
         {
-            //var query = Regex.Unescape(value);
-            Match match = Regex.Match(text, query);
+            switch(modifier)
+            {
+                case (int) TextTriggerModifiers.Contains:
 
-            return match.Success;
+                    string text = msg.message;
+                    string query = (string) value;
+
+                    Match match = Regex.Match(text, query);
+
+                    return match.Success;
+                
+                default:
+                    return false;
+            }
+            
         }
     }
 
@@ -66,7 +77,7 @@ namespace DataLayer
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public bool Eval(TriggerInputData msg)
+        public bool Eval(CommsLayerMessage msg)
         {
             foreach (var trigger in triggers)
             {
@@ -95,7 +106,7 @@ namespace DataLayer
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public bool Eval(TriggerInputData msg)
+        public bool Eval(CommsLayerMessage msg)
         {
             if (subgroups == null)
                 AssembleSubgroups();

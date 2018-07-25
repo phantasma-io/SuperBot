@@ -19,7 +19,17 @@ namespace DataLayer{
     public partial class Reaction
     {
         [JsonConverter(typeof(StringEnumConverter))]
-        public ReactionType reactionType {get;set;}
-        public string value {get;set;}
+        public ReactionType reactionType {get; set;}
+        public object value {get;set;}
+
+        public int modifier {get;set;}
+        public string subgroup {get;set;}
+    }
+
+    //for the csv file reaction
+    public partial class CsvMetadataDBO {
+        public bool areDictionaries { get;set; }
+        public List<string> columns { get; set; }
+        public string filename { get; set; }
     }
 }

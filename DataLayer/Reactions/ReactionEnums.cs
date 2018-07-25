@@ -4,7 +4,8 @@ namespace DataLayer{
     public enum ReactionType {
         Text,
         GlobalVariable,
-        DictionaryVariable
+        DictionaryVariable,
+        Special
     }
 
     public enum TextReactionModifiers {
@@ -20,5 +21,9 @@ namespace DataLayer{
         SavePresetValue,
         SaveUserMessage,
         DeleteEntry
+    }
+
+    public enum SpecialReactionModifiers {
+        CreateCSV
     }
 }

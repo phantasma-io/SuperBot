@@ -10,7 +10,7 @@ namespace CommsLayer
         public void EnableComms()
         {
             //TODO: refactor so that we don't need to access the datalayer to retrieve settings. commslayer should never interact with the datalayer directly
-            dynamic settings = DataUtils.ReadJsonToDynamic(DataUtils.Files.CommsSettings);
+            dynamic settings = FileManager.ReadJsonToDynamic(FileManager.Location.CommsSettings);
             telegramListener = new TelegramListener(settings);
         }
     }

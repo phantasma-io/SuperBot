@@ -2,13 +2,13 @@
     "whitelist start":{
         "reactions": [
             {
-                "reactionType": 0,
+                "reactionType": "Text",
                 "modifier": 0,
                 "value": "What is your email address?",
                 "subgroup": "1"
             },
             {
-                "reactionType": 2,
+                "reactionType": "DictionaryVariable",
                 "modifier": 0,
                 "value": {
                     "variable": "whitelist status",
@@ -21,7 +21,7 @@
     "whitelist email":{
         "reactions": [
             {
-                "reactionType": 2,
+                "reactionType": "DictionaryVariable",
                 "modifier": 1,
                 "value": {
                     "variable": "whitelist email",
@@ -30,13 +30,13 @@
                 "subgroup": "1"
             },
             {
-                "reactionType": 0,
+                "reactionType": "Text",
                 "modifier": 0,
                 "value": "What is your wallet public address?",
                 "subgroup":"2"
             },
             {
-                "reactionType": 2,
+                "reactionType": "DictionaryVariable",
                 "modifier": 0,
                 "value": {
                     "variable": "whitelist status",
@@ -49,7 +49,7 @@
     "whitelist address":{
         "reactions": [
             {
-                "reactionType": 2,
+                "reactionType": "DictionaryVariable",
                 "modifier": 1,
                 "value": {
                     "variable": "whitelist address",
@@ -58,13 +58,13 @@
                 "subgroup":"1"
             },
             {
-                "reactionType": 0,
+                "reactionType": "Text",
                 "modifier": 0,
                 "value": "What is your full name?",
                 "subgroup":"2"
             },
             {
-                "reactionType": 2,
+                "reactionType": "DictionaryVariable",
                 "modifier": 0,
                 "value": {
                     "variable": "whitelist status",
@@ -77,7 +77,7 @@
     "whitelist name":{
         "reactions": [
             {
-                "reactionType": 2,
+                "reactionType": "DictionaryVariable",
                 "modifier": 1,
                 "value": {
                     "variable": "whitelist name",
@@ -86,19 +86,49 @@
                 "subgroup":"1"
             },
             {
-                "reactionType": 0,
+                "reactionType": "Text",
                 "modifier": 0,
                 "value": "Whitelisting process complete. To the moooon",
                 "subgroup":"2"
             },
             {
-                "reactionType": 2,
+                "reactionType": "DictionaryVariable",
                 "modifier": 0,
                 "value": {
                     "variable": "whitelist status",
                     "value": "complete"
                 },
                 "subgroup":"3"
+            }
+        ]
+    },
+    "whitelist already done":{
+        "reactions":[
+            {
+                "reactionType": "Text",
+                "modifier": 0,
+                "value": "You stupid noob, you're already whitelisted. STAHP",
+                "subgroup":"1"
+            }
+        ]
+    },
+    "create whitelist csv":{
+        "reactions":[
+            {
+                "reactionType": "Text",
+                "modifier": 0,
+                "value": "Saving whitelist to .csv",
+                "subgroup":"1"
+            },
+            {
+                "reactionType": "Special",
+                "modifier": 0,
+                "value": {
+                    "areDictionaries": true,
+                    "columns":["whitelist email", "whitelist address", "whitelist name", "whitelist status"],
+                    "filename": "whitelist"
+                },
+                "subgroup":"2"
             }
         ]
     }

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace MiddlemanLayer {
     public class BehaviourManager
@@ -18,7 +19,7 @@ namespace MiddlemanLayer {
         /// </summary>
         /// <param name="msg">The TriggerInputMessage with all possible infos triggers could need</param>
         /// <returns>Returns the corresponding Behaviour key in case of match, empty string otherwise</returns>
-        public string EvaluateTriggers(TriggerInputData msg)
+        public string EvaluateTriggers(CommsLayerMessage msg)
         {
             if(triggerGroups == null)
                 LoadBehaviours();
@@ -33,30 +34,45 @@ namespace MiddlemanLayer {
             return "";
         }
 
-        public ReactionOutputMessage GetReaction(string behaviourKey)
+        /// <summary>
+        /// Applies 1 random reaction per sub-group. All the applied reactions of <ReactionType.Text> will return
+        /// a line for the bot to say, and these lines get added to the ReactionOutputMessage.
+        /// </summary>
+        /// <param name="behaviourKey"></param>
+        /// <returns></returns>
+        public List<ReactionOutputMessage> ApplyReactions(string behaviourKey, CommsLayerMessage message)
         {
-            if(behaviourKey == "")
-                return null;
-            return reactionGroups[behaviourKey].SelectReaction();
+            if(behaviourKey == "" || !reactionGroups.ContainsKey(behaviourKey))
+                return new List<ReactionOutputMessage>();
+
+            return reactionGroups[behaviourKey].React(message);
         }
 
         public void LoadBehaviours()
         {
             LoadTriggers();
             LoadReactions();
+            LoadUserVariables();
         }
 
         private void LoadTriggers()
         {
-            string json = DataUtils.ReadJsonToString(DataUtils.Files.Triggers);
+            string json = FileManager.ReadJsonToString(FileManager.Location.Triggers);
             triggerGroups = JsonConvert.DeserializeObject<Dictionary<string,TriggerGroup>>(json);
         }
 
         private void LoadReactions()
         {
-            string json = DataUtils.ReadJsonToString(DataUtils.Files.Reactions);
+            string json = FileManager.ReadJsonToString(FileManager.Location.Reactions);
             reactionGroups = JsonConvert.DeserializeObject<Dictionary<string,ReactionGroup>>(json);
         }
 
+        private void LoadUserVariables()
+        {
+            string json = FileManager.ReadJsonToString(FileManager.Location.UserVariablesList);
+            var variables = JsonConvert.DeserializeObject<Dictionary<string, List<UserVariable>>>(json);
+
+            UserVariablesSingleton.LoadUserVariables(variables.ElementAt(0).Value);
+        }
     }
 }

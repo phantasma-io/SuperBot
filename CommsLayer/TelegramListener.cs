@@ -6,6 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace CommsLayer
 {
@@ -57,17 +58,16 @@ namespace CommsLayer
                         }*/
 
                     case MessageType.Text:
-                        var triggerMessage = new TriggerInputData(TriggerType.Text, message.Text, userId, chatId);
-                        var matchedTriggerLabel = behaviourManager.EvaluateTriggers(triggerMessage);
+                        var commsMsg = new CommsLayerMessage(message.Text, userId, chatId);
+                        var matchedTriggerLabel = behaviourManager.EvaluateTriggers(commsMsg);
 
                         Console.WriteLine(matchedTriggerLabel);
 
-                        var reaction = behaviourManager.GetReaction(matchedTriggerLabel);
+                        var reactionOutputMessages = behaviourManager.ApplyReactions(matchedTriggerLabel, commsMsg);
 
-                        if(reaction != null)
+                        if(reactionOutputMessages != null && reactionOutputMessages.Count > 0)
                         {
-                            reaction.SetReplyDestination(userId, chatId);
-                            ParseReaction(reaction);
+                            TypeMessagesAsync(reactionOutputMessages, chatId);
                         }
                         
                     break;
@@ -100,19 +100,24 @@ namespace CommsLayer
             }
         }
 
-        private async void ParseReaction(ReactionOutputMessage reaction)
+        private async Task TypeMessagesAsync(List<ReactionOutputMessage> reactionOutputMessages, long chatId)
         {
-            switch(reaction.type)
+            foreach(ReactionOutputMessage output in reactionOutputMessages)
             {
-                case ReactionType.Text:
-                    string msg = (string) reaction.data;
-                    await TypeMessage(reaction.chatId, msg);
-                break;
-
-                default:
-                break;
+                string msg = output.message;
+                
+                if(output.replyToPublic)
+                    chatId = 0; //* GET THE PUBLIC CHAT ID FROM THE CONFIG FILE OR SOMETHING */
+                
+                await TypeMessage(chatId, msg);
             }
+        }
 
+        private async Task TypeMessage(long chatId, string reply)
+        {
+            await Bot.SendChatActionAsync(chatId, ChatAction.Typing);
+            await Task.Delay(1000); // simulate longer running task
+            await Bot.SendTextMessageAsync(chatId, reply);
         }
 
         /// <summary>
@@ -136,12 +141,5 @@ namespace CommsLayer
                 lastPublicChat = DateTime.UtcNow;
             }
         }*/
-
-        private async Task TypeMessage(long chatId, string reply)
-        {
-            await Bot.SendChatActionAsync(chatId, ChatAction.Typing);
-            await Task.Delay(1000); // simulate longer running task
-            await Bot.SendTextMessageAsync(chatId, reply);
-        }
     }
 }

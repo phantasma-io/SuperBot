@@ -1,9 +1,29 @@
 {
+    "whitelist already done": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": "DictionaryVariable",
+                "value": {
+                    "variable": "whitelist status",
+                    "value": "complete"
+                },
+                "modifier": 0,
+                "subgroup": "1"
+            },
+            {
+                "triggerType": "Text",
+                "value": "/whitelist",
+                "modifier": 0,
+                "subgroup": ""
+            }
+        ]
+    },
     "whitelist start":{
         "privateTrigger": true,
         "triggers": [
             {
-                "triggerType": 0,
+                "triggerType": "Text",
                 "value": "/whitelist",
                 "modifier": 0,
                 "subgroup": ""
@@ -14,7 +34,7 @@
         "privateTrigger": true,
         "triggers": [
             {
-                "triggerType": 2,
+                "triggerType": "DictionaryVariable",
                 "value": {
                     "variable": "whitelist status",
                     "value": "need email"
@@ -23,7 +43,7 @@
                 "subgroup": "1"
             },
             {
-                "triggerType": 0,
+                "triggerType": "Text",
                 "value": "\\S*@\\S*",
                 "modifier": 0,
                 "subgroup": "2"
@@ -34,7 +54,7 @@
         "privateTrigger": true,
         "triggers": [
             {
-                "triggerType": 2,
+                "triggerType": "DictionaryVariable",
                 "value": {
                     "variable": "whitelist status",
                     "value": "need address"
@@ -43,7 +63,7 @@
                 "subgroup": "1"
             },
             {
-                "triggerType": 0,
+                "triggerType": "Text",
                 "value": "\\S*",
                 "modifier": 0,
                 "subgroup": "2"
@@ -54,7 +74,7 @@
         "privateTrigger": true,
         "triggers": [
             {
-                "triggerType": 2,
+                "triggerType": "DictionaryVariable",
                 "value": {
                     "variable": "whitelist status",
                     "value": "need name"
@@ -63,8 +83,19 @@
                 "subgroup": "1"
             },
             {
-                "triggerType": 0,
+                "triggerType": "Text",
                 "value": "\\S*",
+                "modifier": 0,
+                "subgroup": "2"
+            }
+        ]
+    },
+    "create whitelist csv": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": "Text",
+                "value": "/dumpwhitelist",
                 "modifier": 0,
                 "subgroup": "2"
             }
