@@ -32,4 +32,10 @@ namespace DataLayer{
         public List<string> columns { get; set; }
         public string filename { get; set; }
     }
+
+    public partial class ImageMetadataDBO {
+        public string suffix {get;set;}
+        public string subfolderName {get;set;}
+        public string dictionaryVariable {get;set;}
+    }
 }

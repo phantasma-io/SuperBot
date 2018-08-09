@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MiddlemanLayer;
 using DataLayer;
 using Newtonsoft.Json;
+using System.Net;
 
 /// <summary>
 /// TODO
@@ -30,7 +31,7 @@ namespace DataLayer{
                     ParseDictionaryReaction(msg);
                     break;
 
-                case ReactionType.Special:
+                case ReactionType.IO:
                     ParseSpecialReaction(msg);
                     break;
             }
@@ -42,9 +43,17 @@ namespace DataLayer{
         {
             switch(modifier)
             {
-                case (int) SpecialReactionModifiers.CreateCSV:
+                case (int) IOReactionModifiers.CreateCSV:
                     var csvMetadata = JsonConvert.DeserializeObject<CsvMetadataDBO>(value.ToString());
                     UserVariablesSingleton.DumpToCSV(csvMetadata);
+                    break;
+
+                case (int) IOReactionModifiers.SaveImage:
+                    var fileMetadata = (Telegram.Bot.Types.File) msg.message;
+                    
+                    var imageMetadata = JsonConvert.DeserializeObject<ImageMetadataDBO>(value.ToString());
+
+                    FileManager.DownloadAndSaveFile(fileMetadata.FilePath, $"{msg.senderId}{imageMetadata.suffix}.jpg", imageMetadata.subfolderName);
                     break;
             }
         }
@@ -60,7 +69,11 @@ namespace DataLayer{
                 break;
 
                 case (int) DictionaryVariableReactionModifiers.SaveUserMessage:
-                    UserVariablesSingleton.SetDictionaryVariable(dv.variable, key, clm.message);
+                    
+                    if(clm.type != CommsLayerMessage.Type.Text)
+                        return;
+                        
+                    UserVariablesSingleton.SetDictionaryVariable(dv.variable, key, (string) clm.message);
                 break;
 
                 case (int) DictionaryVariableReactionModifiers.DeleteEntry:

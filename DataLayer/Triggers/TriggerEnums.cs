@@ -7,7 +7,8 @@ namespace DataLayer {
         /// </summary>
         Text,
         GlobalVariable,
-        DictionaryVariable
+        DictionaryVariable,
+        Image,
     }
 
     public enum TextTriggerModifiers {
@@ -20,5 +21,9 @@ namespace DataLayer {
 
     public enum DictionaryVariableTriggerModifiers {
         MatchValues
+    }
+
+    public enum ImageTriggerModifiers {
+        IsImage
     }
 }

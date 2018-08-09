@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
+using System.Text;
+using System.Net;
 
 namespace DataLayer
 {   
@@ -17,6 +19,7 @@ namespace DataLayer
 
         private const string csvStorePath = "/DataLayer/IO/CSVStorage/";
         private const string jsonStorePath = "/DataLayer/IO/JsonStorage/";
+        private const string genericStorePath = "/DataLayer/IO/FileStorage/";
 
         private static string GetJsonPath(Location filekey) => $"{Environment.CurrentDirectory}{jsonStorePath}{pathSuffix[filekey]}";
         private static string GetCsvStorePath(string filename) => $"{Environment.CurrentDirectory}{csvStorePath}{filename}.csv";
@@ -54,5 +57,52 @@ namespace DataLayer
             File.WriteAllText(GetCsvStorePath(filename), csv);
         }
 
+        public static void SaveFile(string data, string filename, string subfolder = "")
+        {
+            var path = "";
+            
+            if(subfolder == "")
+                path = $"{Environment.CurrentDirectory}{genericStorePath}";
+            else
+                path = $"{Environment.CurrentDirectory}{genericStorePath}/{subfolder}";
+            
+            if(!File.Exists(path))
+                System.IO.Directory.CreateDirectory(path);
+
+            File.WriteAllText($"{path}/{filename}", data);
+        }
+
+        public static void DownloadAndSaveFile(string url, string filename, string subfolder = "")
+        {
+            var path = "";
+            
+            if(subfolder == "")
+                path = $"{Environment.CurrentDirectory}{genericStorePath}";
+            else
+                path = $"{Environment.CurrentDirectory}{genericStorePath}/{subfolder}";
+            
+            if(!File.Exists(path))
+                System.IO.Directory.CreateDirectory(path);
+
+            using (WebClient client = new WebClient())
+            {
+                client.DownloadFile(new Uri(url), $"{path}/{filename}");
+            }
+        }
+
+        public static void SaveFileBinary(string data, string filename, string subfolder = "")
+        {
+            var path = "";
+            
+            if(subfolder == "")
+                path = $"{Environment.CurrentDirectory}{genericStorePath}";
+            else
+                path = $"{Environment.CurrentDirectory}{genericStorePath}/{subfolder}";
+            
+            if(!File.Exists(path))
+                System.IO.Directory.CreateDirectory(path);
+
+            File.WriteAllBytes($"{path}/{filename}", Encoding.ASCII.GetBytes(data));
+        }
     }
 }

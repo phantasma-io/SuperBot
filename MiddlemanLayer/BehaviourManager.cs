@@ -19,19 +19,24 @@ namespace MiddlemanLayer {
         /// </summary>
         /// <param name="msg">The TriggerInputMessage with all possible infos triggers could need</param>
         /// <returns>Returns the corresponding Behaviour key in case of match, empty string otherwise</returns>
-        public string EvaluateTriggers(CommsLayerMessage msg)
+        public TriggerOutputMessage EvaluateTriggers(CommsLayerMessage msg)
         {
             if(triggerGroups == null)
                 LoadBehaviours();
 
+            var lastFailedGroup = new TriggerOutputMessage(null, null);
+            
             foreach(var keypair in triggerGroups)
             {
                 var triggerGroup = keypair.Value;
 
-                if(triggerGroup.Eval(msg))
-                    return keypair.Key;
+                var groupOutput = triggerGroup.Eval(msg);
+                if(groupOutput.result)
+                    return new TriggerOutputMessage(keypair.Key, groupOutput);
+                else
+                    lastFailedGroup.Edit(keypair.Key, groupOutput);
             }
-            return "";
+            return lastFailedGroup;
         }
 
         /// <summary>

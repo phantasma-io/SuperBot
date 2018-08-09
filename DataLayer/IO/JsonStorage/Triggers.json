@@ -1,4 +1,61 @@
 {
+    "kyc start": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": "Text",
+                "value": "/kyc",
+                "modifier": 0,
+                "subgroup": ""
+            }
+        ]
+    },
+    "kyc wallet": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": "DictionaryVariable",
+                "value": {
+                    "variable": "kyc status",
+                    "value": "need wallet"
+                },
+                "modifier": 0,
+                "subgroup": "1"
+            },
+            {
+                "triggerType": "Text",
+                "value": "\\S*",
+                "modifier": 0,
+                "subgroup": "2",
+
+                "onFailMsg": "Wrong wallet address you moron"
+            }
+        ]
+    },
+    "kyc picture": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": "DictionaryVariable",
+                "value": {
+                    "variable": "kyc status",
+                    "value": "need picture"
+                },
+                "modifier": 0,
+                "subgroup": "1"
+            },
+            {
+                "triggerType": "Image",
+                "modifier": 0,
+                "value":{
+                    "minSize": null,
+                    "maxSize": 15.6
+                },
+                "subgroup": "2"
+                
+            }
+        ]
+    },
     "whitelist already done": {
         "privateTrigger": true,
         "triggers": [

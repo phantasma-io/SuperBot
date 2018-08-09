@@ -28,11 +28,11 @@ namespace DataLayer
 
                 //create dictionaryVariable sql table
                 string query = $@"CREATE TABLE IF NOT EXISTS {dvTableName}(
-                                {dictionaryNameColumn} VARCHAR(100) NOT NULL,
-                                {userIdColumn} VARCHAR(100) NOT NULL,
-                                {valueColumn} VARCHAR(500) NULL,
+                                {dictionaryNameColumn} VARCHAR(300) NOT NULL,
+                                {userIdColumn} VARCHAR(300) NOT NULL,
+                                {valueColumn} VARCHAR(10000) NULL,
                                 PRIMARY KEY ({dictionaryNameColumn}, {userIdColumn})
-                                )";
+                                ) CHARACTER SET utf8";
                 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 cmd.ExecuteNonQuery();

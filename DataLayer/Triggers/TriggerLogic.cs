@@ -1,17 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.RegularExpressions;
 using MiddlemanLayer;
 using Newtonsoft.Json;
 
 namespace DataLayer
 {
+    public partial class TriggerOutput {
+        public bool result {get; private set;}
+        public string onFailMsg {get; private set;}
+
+        public TriggerOutput(bool result, string onFailMsg)
+        {
+            this.result = result;
+            this.onFailMsg = onFailMsg;
+        }
+    }
 
     public partial class Trigger
     {
-        public bool Eval(CommsLayerMessage msg)
+        public TriggerOutput Eval(CommsLayerMessage msg)
         {
-            return ParseTriggerInput(msg);
+            return new TriggerOutput(ParseTriggerInput(msg), onFailMsg);
         }
 
         private bool ParseTriggerInput(CommsLayerMessage msg)
@@ -21,10 +32,38 @@ namespace DataLayer
                 case TriggerType.Text:
                     return ParseTextTrigger(msg);
 
-                case TriggerType.DictionaryVariable:
-                     
+                case TriggerType.DictionaryVariable:                     
                     return ParseDictionaryTrigger(msg);
 
+                case TriggerType.Image:
+                    return ParseImageTrigger(msg);
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool ParseImageTrigger(CommsLayerMessage msg)
+        {
+            if(msg.type != CommsLayerMessage.Type.Image)
+                return false;
+
+            switch(modifier)
+            {
+                case 0:
+                    var triggerData = JsonConvert.DeserializeObject<ImageTriggerMetadataDBO>(value.ToString());
+                    var fileMetadata = (Telegram.Bot.Types.File) msg.message;
+                    var fileSize = fileMetadata.FileSize / (1024.0f*1024.0f);
+
+                    bool result = true;
+
+                    if(triggerData.minSize.HasValue && fileSize < triggerData.minSize.Value)
+                        result = false;
+
+                    if(triggerData.maxSize.HasValue && fileSize > triggerData.maxSize.Value)
+                        result = false;
+
+                    return result;
                 default:
                     return false;
             }
@@ -50,11 +89,14 @@ namespace DataLayer
 
         private bool ParseTextTrigger(CommsLayerMessage msg)
         {
+            if(msg.type != CommsLayerMessage.Type.Text)
+                return false;
+
             switch(modifier)
             {
                 case (int) TextTriggerModifiers.Contains:
 
-                    string text = msg.message;
+                    string text = (string) msg.message;
                     string query = (string) value;
 
                     Match match = Regex.Match(text, query);
@@ -64,7 +106,6 @@ namespace DataLayer
                 default:
                     return false;
             }
-            
         }
     }
 
@@ -77,14 +118,20 @@ namespace DataLayer
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public bool Eval(CommsLayerMessage msg)
+        public TriggerOutput Eval(CommsLayerMessage msg)
         {
+            var subgroupOutput = new TriggerOutput(true, null);
+
             foreach (var trigger in triggers)
             {
-                if (trigger.Eval(msg))
-                    return true;
+                var triggerOutput = trigger.Eval(msg);
+
+                if (triggerOutput.result)
+                    return triggerOutput;
+                else
+                    subgroupOutput = triggerOutput;
             }
-            return false;
+            return subgroupOutput;
         }
 
         public void AddTrigger(Trigger trigger)
@@ -106,19 +153,22 @@ namespace DataLayer
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public bool Eval(CommsLayerMessage msg)
+        public TriggerOutput Eval(CommsLayerMessage msg)
         {
             if (subgroups == null)
                 AssembleSubgroups();
 
+            var groupOutput = new TriggerOutput(true, null);
+
             foreach (var keypair in subgroups)
             {
                 var subgroup = keypair.Value;
-
-                if (!subgroup.Eval(msg))
-                    return false;
+                var subgroupOutput = subgroup.Eval(msg);
+                
+                if (subgroupOutput.result == false)
+                    return subgroupOutput;
             }
-            return true;
+            return groupOutput;
         }
 
         /// <summary>

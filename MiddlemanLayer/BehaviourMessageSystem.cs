@@ -11,14 +11,38 @@ namespace MiddlemanLayer {
     /// </summary>
     public class CommsLayerMessage {
         
-        readonly public string message;
+        public enum Type{Text, Image};
+
+        readonly public object message;
+        readonly public Type type;
         readonly public long senderId;
         readonly public long chatId;
 
-        public CommsLayerMessage(string  msg, long senderId, long chatId){
+        public CommsLayerMessage(object  msg, Type type, long senderId, long chatId){
             this.message= msg;
+            this.type = type;
             this.senderId = senderId;
             this.chatId = chatId;
+        }
+    }
+
+    public class TriggerOutputMessage {
+        public string triggerName {get; private set;}
+        public string onFailMsg {get; private set;}
+        public bool result {get; private set;}
+
+        public TriggerOutputMessage(string name, TriggerOutput output)
+        {
+            triggerName = name;
+            result = output.result;
+            onFailMsg = output.onFailMsg;
+        }
+
+        public void Edit(string name, TriggerOutput output)
+        {
+            triggerName = name;
+            result = output.result;
+            onFailMsg = output.onFailMsg;
         }
     }
     

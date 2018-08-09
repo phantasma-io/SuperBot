@@ -27,7 +27,15 @@ namespace DataLayer
         public object value {get;set;}
         
         public int modifier {get;set;}
-        public string subgroup {get;set;}        
+        public string subgroup {get;set;}
+
+        public string onFailMsg {get;set;}
+    }
+
+    public partial class ImageTriggerMetadataDBO
+    {
+        public float? minSize {get; set;}   //in megabytes
+        public float? maxSize {get; set;}
     }
 }
 

@@ -7,6 +7,7 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Telegram.Bot.Types;
 
 namespace CommsLayer
 {
@@ -14,6 +15,7 @@ namespace CommsLayer
     {
         private TelegramBotClient Bot;
         private BehaviourManager behaviourManager = new BehaviourManager();
+        private readonly string botToken;
 
 /// <summary>
 /// Tries to initialize the telegram listener.
@@ -21,7 +23,7 @@ namespace CommsLayer
 /// <returns>True on success, false otherwise</returns>
         public TelegramListener(dynamic settings)
         {
-            string botToken = settings.telegramBotToken;
+            botToken = settings.telegramBotToken;
             Bot = new TelegramBotClient(botToken);
 
             Bot.OnMessage += BotOnMessageReceived;
@@ -36,17 +38,22 @@ namespace CommsLayer
             Bot.StopReceiving();
         }
 /* */
-        private void BotOnMessageReceived(object sender, MessageEventArgs args)
+        private async void BotOnMessageReceived(object sender, MessageEventArgs args)
         {
             try
             {
-                var message = args.Message;
-                var userId = message.From.Id;
-                var chatId = message.Chat.Id;
+                var telegramMessage = args.Message;
+                var userId = telegramMessage.From.Id;
+                var chatId = telegramMessage.Chat.Id;
 
-                if (message == null) return;
+                object message = null;
+                CommsLayerMessage.Type messageType = 0;
+                
+                string fileId = "";
 
-                switch (message.Type)
+                if (telegramMessage == null) return;
+
+                switch (telegramMessage.Type)
                 {
                     /*case MessageType.ChatMembersAdded:
                         {
@@ -58,40 +65,59 @@ namespace CommsLayer
                         }*/
 
                     case MessageType.Text:
-                        var commsMsg = new CommsLayerMessage(message.Text, userId, chatId);
-                        var matchedTriggerLabel = behaviourManager.EvaluateTriggers(commsMsg);
-
-                        Console.WriteLine(matchedTriggerLabel);
-
-                        var reactionOutputMessages = behaviourManager.ApplyReactions(matchedTriggerLabel, commsMsg);
-
-                        if(reactionOutputMessages != null && reactionOutputMessages.Count > 0)
-                        {
-                            TypeMessagesAsync(reactionOutputMessages, chatId);
-                        }
+                        message = telegramMessage.Text;
+                        messageType = CommsLayerMessage.Type.Text;
                         
                     break;
 
-                    default:
-                        {
-                            /* if (message.Chat.Type == ChatType.Private)
-                            {
-                                await PrivateChat(message);
-                            }
-                            else
-                            {
-                                await PublicChat(message);
-                            } */
+                    case MessageType.Photo:
+                        var i = telegramMessage.Photo.Length - 1;
+                        fileId = telegramMessage.Photo[i].FileId;
 
+                        message = (object) (await Bot.GetFileAsync(fileId));
+                        ((Telegram.Bot.Types.File)message).FilePath = $"https://api.telegram.org/file/bot{botToken}/{((Telegram.Bot.Types.File)message).FilePath}";
+                        messageType = CommsLayerMessage.Type.Image;
+                        
+                        break;
+
+                    case MessageType.Document:
+                        switch (telegramMessage.Document.MimeType)
+                        {
+                            case "image/png":
+                            case "image/jpg":
+                            case "image/jpeg":
+                                fileId = telegramMessage.Document.FileId;
+                                
+                                message = (object) await Bot.GetFileAsync(fileId);
+                                ((Telegram.Bot.Types.File)message).FilePath = $"https://api.telegram.org/file/bot{botToken}/{((Telegram.Bot.Types.File)message).FilePath}";
+                                messageType = CommsLayerMessage.Type.Image;
                             break;
                         }
+                        break;
                 }
 
-                /* var kyc_delta = DateTime.UtcNow - last_kyc_reload;
-                if (kyc_delta.TotalMinutes > 5)
+                if(message == null)
+                    return;
+
+                var commsMsg = new CommsLayerMessage(message, messageType, userId, chatId);
+                var triggerOutput = behaviourManager.EvaluateTriggers(commsMsg);
+
+                if(triggerOutput.result)
                 {
-                    ReloadKYC();
-                } */
+                    Console.WriteLine($"{telegramMessage.From.Username}: {triggerOutput.triggerName}");
+
+                    var reactionOutputMessages = behaviourManager.ApplyReactions(triggerOutput.triggerName, commsMsg);
+
+                    if(reactionOutputMessages != null && reactionOutputMessages.Count > 0)
+                    {
+                        TypeMessagesAsync(chatId, reactionOutputMessages);
+                    }
+                }
+                else
+                {
+                    if(triggerOutput.onFailMsg != null)
+                        TypeMessageAsync(chatId, triggerOutput.onFailMsg);
+                }
 
             }
             catch (Exception e)
@@ -100,7 +126,7 @@ namespace CommsLayer
             }
         }
 
-        private async Task TypeMessagesAsync(List<ReactionOutputMessage> reactionOutputMessages, long chatId)
+        private async Task TypeMessagesAsync(long chatId, List<ReactionOutputMessage> reactionOutputMessages)
         {
             foreach(ReactionOutputMessage output in reactionOutputMessages)
             {
@@ -109,11 +135,11 @@ namespace CommsLayer
                 if(output.replyToPublic)
                     chatId = 0; //* GET THE PUBLIC CHAT ID FROM THE CONFIG FILE OR SOMETHING */
                 
-                await TypeMessage(chatId, msg);
+                await TypeMessageAsync(chatId, msg);
             }
         }
 
-        private async Task TypeMessage(long chatId, string reply)
+        private async Task TypeMessageAsync(long chatId, string reply)
         {
             await Bot.SendChatActionAsync(chatId, ChatAction.Typing);
             await Task.Delay(1000); // simulate longer running task

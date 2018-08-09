@@ -5,7 +5,7 @@ namespace DataLayer{
         Text,
         GlobalVariable,
         DictionaryVariable,
-        Special
+        IO
     }
 
     public enum TextReactionModifiers {
@@ -23,7 +23,8 @@ namespace DataLayer{
         DeleteEntry
     }
 
-    public enum SpecialReactionModifiers {
-        CreateCSV
+    public enum IOReactionModifiers {
+        CreateCSV,
+        SaveImage
     }
 }

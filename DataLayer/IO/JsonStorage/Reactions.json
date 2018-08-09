@@ -1,4 +1,79 @@
 {
+    "kyc start": {
+        "reactions": [
+            {
+                "reactionType": "Text",
+                "modifier": 0,
+                "value": "What is your wallet address?",
+                "subgroup": "1"
+            },
+            {
+                "reactionType": "DictionaryVariable",
+                "modifier": 0,
+                "value": {
+                    "variable": "kyc status",
+                    "value": "need wallet"
+                },
+                "subgroup": "2"
+            }
+        ]
+    },
+    "kyc wallet": {
+        "reactions": [
+            {
+                "reactionType": "DictionaryVariable",
+                "modifier": 1,
+                "value": {
+                    "variable": "kyc wallet",
+                    "value": null
+                },
+                "subgroup": "1"
+            },
+            {
+                "reactionType": "Text",
+                "modifier": 0,
+                "value": "Please send a picture of your ID or passport",
+                "subgroup": "2"
+            },
+            {
+                "reactionType": "DictionaryVariable",
+                "modifier": 0,
+                "value": {
+                    "variable": "kyc status",
+                    "value": "need picture"
+                },
+                "subgroup": "3"
+            }
+        ]
+    },
+    "kyc picture": {
+        "reactions": [
+            {
+                "reactionType": "Text",
+                "modifier": 0,
+                "value": "KYC complete, check again later to learn if it was approved!",
+                "subgroup": "2"
+            },
+            {
+                "reactionType": "DictionaryVariable",
+                "modifier": 0,
+                "value": {
+                    "variable": "kyc status",
+                    "value": "pending"
+                },
+                "subgroup": "3"
+            },
+            {
+                "reactionType": "IO",
+                "modifier": 1,
+                "value": {
+                    "suffix": "_kyc",
+                    "subfolderName": "kyc"
+                },
+                "subgroup": "4"
+            }
+        ]
+    },
     "whitelist start":{
         "reactions": [
             {
@@ -121,7 +196,7 @@
                 "subgroup":"1"
             },
             {
-                "reactionType": "Special",
+                "reactionType": "IO",
                 "modifier": 0,
                 "value": {
                     "areDictionaries": true,

@@ -7,6 +7,18 @@
             "startValue": ""
         },
         {
+            "name": "kyc status",
+            "saveMethod": 0,
+            "isDictionary": true,
+            "startValue": ""
+        },
+        {
+            "name": "kyc wallet",
+            "saveMethod": 0,
+            "isDictionary": true,
+            "startValue": ""
+        },
+        {
             "name": "whitelist email",
             "saveMethod": 0,
             "isDictionary": true,
