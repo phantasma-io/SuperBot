@@ -4,13 +4,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "What is your wallet address?",
+                "data": "What is your wallet address?",
                 "subgroup": "1"
             },
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "variable": "kyc status",
                     "value": "need wallet"
                 },
@@ -23,7 +23,7 @@
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 1,
-                "value": {
+                "data": {
                     "variable": "kyc wallet",
                     "value": null
                 },
@@ -32,13 +32,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "Please send a picture of your ID or passport",
+                "data": "Please send a picture of your ID or passport",
                 "subgroup": "2"
             },
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "variable": "kyc status",
                     "value": "need picture"
                 },
@@ -51,13 +51,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "KYC complete, check again later to learn if it was approved!",
+                "data": "KYC complete, check again later to learn if it was approved!",
                 "subgroup": "2"
             },
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "variable": "kyc status",
                     "value": "pending"
                 },
@@ -66,7 +66,7 @@
             {
                 "reactionType": "IO",
                 "modifier": 1,
-                "value": {
+                "data": {
                     "suffix": "_kyc",
                     "subfolderName": "kyc"
                 },
@@ -79,13 +79,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "What is your email address?",
+                "data": "What is your email address?",
                 "subgroup": "1"
             },
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "need email"
                 },
@@ -98,7 +98,7 @@
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 1,
-                "value": {
+                "data": {
                     "variable": "whitelist email",
                     "value": null
                 },
@@ -107,13 +107,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "What is your wallet public address?",
+                "data": "What is your wallet public address?",
                 "subgroup":"2"
             },
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "need address"
                 },
@@ -126,7 +126,7 @@
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 1,
-                "value": {
+                "data": {
                     "variable": "whitelist address",
                     "value": null
                 },
@@ -135,13 +135,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "What is your full name?",
+                "data": "What is your full name?",
                 "subgroup":"2"
             },
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "need name"
                 },
@@ -154,7 +154,7 @@
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 1,
-                "value": {
+                "data": {
                     "variable": "whitelist name",
                     "value":null
                 },
@@ -163,13 +163,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "Whitelisting process complete. To the moooon",
+                "data": "Whitelisting process complete. To the moooon",
                 "subgroup":"2"
             },
             {
                 "reactionType": "DictionaryVariable",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "complete"
                 },
@@ -182,7 +182,7 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "You stupid noob, you're already whitelisted. STAHP",
+                "data": "You stupid noob, you're already whitelisted. STAHP",
                 "subgroup":"1"
             }
         ]
@@ -192,13 +192,13 @@
             {
                 "reactionType": "Text",
                 "modifier": 0,
-                "value": "Saving whitelist to .csv",
+                "data": "Saving whitelist to .csv",
                 "subgroup":"1"
             },
             {
                 "reactionType": "IO",
                 "modifier": 0,
-                "value": {
+                "data": {
                     "areDictionaries": true,
                     "columns":["whitelist email", "whitelist address", "whitelist name", "whitelist status"],
                     "filename": "whitelist"

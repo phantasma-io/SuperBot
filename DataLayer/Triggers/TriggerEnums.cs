@@ -20,7 +20,8 @@ namespace DataLayer {
     }
 
     public enum DictionaryVariableTriggerModifiers {
-        MatchValues
+        MatchValues,
+        KeyExists
     }
 
     public enum ImageTriggerModifiers {

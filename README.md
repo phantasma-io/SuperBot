@@ -1,49 +1,79 @@
 # Phantasma Bot 2.0
 
-Structured approach with separation of communications layer (discord, telegram, etc.) with data layer (json with settings and whatnot).
+Structured approach with separation of communications layer (discord, telegram, etc.) and data layer (json with settings and whatnot), with a middleman layer implementing the façade pattern between them.
 
-##To-Do
+The general architecture is based on a trigger-reaction workflow. In case a trigger is triggered, the reaction associated with it will be used to determine the output action of the bot.
 
-* Create a DBO structure for the Settings.JSON file, stop using dynamic you retard.
-* Look into changing the Modifier structure to flags you can set
+To store user related data, the concept of "user dictionary variables" was developed. A variable of these simply consists of two columns, the first stores user IDs and the second stores a string associated with each of those IDs. Example: "whitelist state" user dictionary variable contains the user id's of the users that attempted whitelist, and holds the state of their whitelist process on the second column.
 
+A powerful and flexible framework was developed for this bot to allow configuration capabilities and tailoring to the user's needs without having to mess with code, instead loading all the needed configurations from JSON (for triggers and reactions) and a MySQL database (for dictionary variables).
 
-## Data Layer
+# Data Layer
+
 Responsible for interacting with JSON files and abstracting their structure details to the MiddlemanLayer
 
-### Settings files
+## Settings files
 
+**This is planned to change into regular JSON DBO parsing like in the rest of the cases**
 They are read into a dynamic type variable, if you mess with the existing names on json without updating the code it will crash.
 We did this because these are meant to be changed only sporadically (once on first setup for a service purchaser,and again with each up/downgrade of the package), and only by us developers, not by customers, so it's not as critical.
 
-### Triggers
+## Triggers
 
 A _Trigger_ is defined as follows:
 
 ```json
 {
     "triggerType": TriggerTypeEnum,
-    "value": "string",
-    "modifier": TriggerModifierEnum,
-    "subgroup": "string"
+    "data": object,
+    "modifier": int,
+    "subgroup": "string",
+    "onFailMsg": "string"
 }
-```k
+```
 
 TriggerTypes and TriggerModifiers, along with their meanings, are defined in TriggerEnums.cs
 
 Trigger Type | Meaning
 ---------|----------
- 0 | A simple text reply trigger
- 1 | Global User-Variable trigger
- 2 | Dictionary User-Variable trigger
+ "Text" | A text input trigger
+ "DictionaryVariable" | Dictionary User-Variable trigger
+ "Image" | An image input trigger
 
-#### Trigger Groups and Sub-groups
+### "data" property structure
+
+For each trigger type, there is a certain expected object type for the "data" property.
+
+Trigger Type | "data" property structure
+---------|----------
+"Text" | ```"data": "regex expression string"```
+ "DictionaryVariable" | ```"data": {"variable": "variable name string", "value": null/"variable value string"}```
+ "Image" | ```"data": {"minSize": null/float (megabytes), "maxSize": null/float (megabytes)```
+
+### Trigger Modifiers
+
+These will define how a specific trigger type will be parsed, and are defined as follows:
+
+Text Trigger Modifier | Meaning
+---------|----------
+ 0 | Checks if the defined regex has any hits on the user's message
+
+ Dictionary Variable Trigger Modifier | Meaning
+---------|----------
+ 0 | Checks if the given variable name has the given value for the user that sent the message.
+ 1 | Checks if the given variable name has a row for the user that sent the message
+
+ Image Trigger Modifier | Meaning
+---------|----------
+ 0 | Checks if the data sent by the user is an image within a specified size (up to a maximum of 20MB due to telegram limitations)
+
+### Trigger Groups and Sub-groups
 
 Each trigger has a group and a sub-group.
 
 ```json
 {
-    "behaviourKey label":{
+    "trigger group name":{
         "privateTrigger": true,
         "triggers": [
             {
@@ -69,7 +99,7 @@ Each trigger has a group and a sub-group.
 }
 ```
 
-Here we have a trigger on _Group_ "group name" with 2 _Sub-groups_, the default one and _Sub-group_ "sub". _Sub-group_ "sub" consists of 2 triggers.
+Here we have a trigger on _Group_ "trigger group name" with 2 _Sub-groups_, the default one and _Sub-group_ "sub". _Sub-group_ "sub" consists of 2 triggers.
 
 **A _TriggerGroup_ is triggered when at least one _Trigger_ of each _TriggerSubgroup_ is triggered.**
 

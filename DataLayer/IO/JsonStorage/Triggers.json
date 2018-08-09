@@ -4,7 +4,7 @@
         "triggers": [
             {
                 "triggerType": "Text",
-                "value": "/kyc",
+                "data": "/kyc",
                 "modifier": 0,
                 "subgroup": ""
             }
@@ -15,7 +15,7 @@
         "triggers": [
             {
                 "triggerType": "DictionaryVariable",
-                "value": {
+                "data": {
                     "variable": "kyc status",
                     "value": "need wallet"
                 },
@@ -24,7 +24,7 @@
             },
             {
                 "triggerType": "Text",
-                "value": "\\S*",
+                "data": "\\S*",
                 "modifier": 0,
                 "subgroup": "2",
 
@@ -37,7 +37,7 @@
         "triggers": [
             {
                 "triggerType": "DictionaryVariable",
-                "value": {
+                "data": {
                     "variable": "kyc status",
                     "value": "need picture"
                 },
@@ -47,7 +47,7 @@
             {
                 "triggerType": "Image",
                 "modifier": 0,
-                "value":{
+                "data": {
                     "minSize": null,
                     "maxSize": 15.6
                 },
@@ -63,7 +63,7 @@
         "triggers": [
             {
                 "triggerType": "DictionaryVariable",
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "complete"
                 },
@@ -72,7 +72,7 @@
             },
             {
                 "triggerType": "Text",
-                "value": "/whitelist",
+                "data": "/whitelist",
                 "modifier": 0,
                 "subgroup": ""
             }
@@ -83,7 +83,7 @@
         "triggers": [
             {
                 "triggerType": "Text",
-                "value": "/whitelist",
+                "data": "/whitelist",
                 "modifier": 0,
                 "subgroup": ""
             }
@@ -94,7 +94,7 @@
         "triggers": [
             {
                 "triggerType": "DictionaryVariable",
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "need email"
                 },
@@ -103,7 +103,7 @@
             },
             {
                 "triggerType": "Text",
-                "value": "\\S*@\\S*",
+                "data": "\\S*@\\S*",
                 "modifier": 0,
                 "subgroup": "2",
 
@@ -116,7 +116,7 @@
         "triggers": [
             {
                 "triggerType": "DictionaryVariable",
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "need address"
                 },
@@ -125,7 +125,7 @@
             },
             {
                 "triggerType": "Text",
-                "value": "\\S*",
+                "data": "\\S*",
                 "modifier": 0,
                 "subgroup": "2"
             }
@@ -136,7 +136,7 @@
         "triggers": [
             {
                 "triggerType": "DictionaryVariable",
-                "value": {
+                "data": {
                     "variable": "whitelist status",
                     "value": "need name"
                 },
@@ -145,7 +145,7 @@
             },
             {
                 "triggerType": "Text",
-                "value": "\\S*",
+                "data": "\\S*",
                 "modifier": 0,
                 "subgroup": "2"
             }
@@ -156,7 +156,7 @@
         "triggers": [
             {
                 "triggerType": "Text",
-                "value": "/dumpwhitelist",
+                "data": "/dumpwhitelist",
                 "modifier": 0,
                 "subgroup": "2"
             }

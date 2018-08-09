@@ -20,7 +20,7 @@ namespace DataLayer{
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public ReactionType reactionType {get; set;}
-        public object value {get;set;}
+        public object data {get;set;}
 
         public int modifier {get;set;}
         public string subgroup {get;set;}

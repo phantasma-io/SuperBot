@@ -57,7 +57,7 @@ namespace MiddlemanLayer {
             if(reaction.reactionType != ReactionType.Text)
                 throw new Exception("Tried to create a ReactionOutputMessage from a non-text Reaction");
 
-            this.message = (string) reaction.value;
+            this.message = (string) reaction.data;
 
             if(reaction.modifier == (int) TextReactionModifiers.ReplyOnPublicChat)
                 this.replyToPublic = true;

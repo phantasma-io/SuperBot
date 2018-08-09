@@ -51,7 +51,7 @@ namespace DataLayer
             switch(modifier)
             {
                 case 0:
-                    var triggerData = JsonConvert.DeserializeObject<ImageTriggerMetadataDBO>(value.ToString());
+                    var triggerData = JsonConvert.DeserializeObject<ImageTriggerMetadataDBO>(data.ToString());
                     var fileMetadata = (Telegram.Bot.Types.File) msg.message;
                     var fileSize = fileMetadata.FileSize / (1024.0f*1024.0f);
 
@@ -71,16 +71,23 @@ namespace DataLayer
 
         private bool ParseDictionaryTrigger(CommsLayerMessage msg)
         {
-            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(value.ToString());
+            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(data.ToString());
+            string dictionaryName, userId, value;
 
             switch(modifier)
             {
                 case (int) DictionaryVariableTriggerModifiers.MatchValues:
-                    string dictionaryName = dv.variable;
-                    string userId = msg.senderId.ToString();
-                    string value = dv.value;
+                    dictionaryName = dv.variable;
+                    userId = msg.senderId.ToString();
+                    value = dv.value;
 
                     return UserVariablesSingleton.DoesDictionaryVariableMatch(dictionaryName, userId, value);
+
+                case (int) DictionaryVariableTriggerModifiers.KeyExists:
+                    dictionaryName = dv.variable;
+                    userId = msg.senderId.ToString();
+
+                    return UserVariablesSingleton.DoesDictionaryVariableUserExist(dictionaryName, userId);
 
                 default:
                     return false;
@@ -97,7 +104,7 @@ namespace DataLayer
                 case (int) TextTriggerModifiers.Contains:
 
                     string text = (string) msg.message;
-                    string query = (string) value;
+                    string query = (string) data;
 
                     Match match = Regex.Match(text, query);
 

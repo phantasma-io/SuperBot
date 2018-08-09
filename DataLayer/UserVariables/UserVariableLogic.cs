@@ -33,7 +33,7 @@ namespace DataLayer{
             }
         }
 
-        public static bool DoesDictionaryVariableMatch(string dictionaryName, string userId, string value)
+        public static bool DoesDictionaryVariableUserExist(string dictionaryName, string userId)
         {
             if(!dictionaryVariables.ContainsKey(dictionaryName))
                 return false;   
@@ -42,18 +42,20 @@ namespace DataLayer{
 
             if(!dictionary.items.ContainsKey(userId))
                 return false;
+            return true;
+        }
 
-            return dictionary.items[userId] == value;
+        public static bool DoesDictionaryVariableMatch(string dictionaryName, string userId, string value)
+        {
+            if(!DoesDictionaryVariableUserExist(dictionaryName, userId))
+                return false;
+
+            return dictionaryVariables[dictionaryName].items[userId] == value;
         }
 
         public static void SetDictionaryVariable(string dictionaryName, string userId, string value)
         {
-            if(!dictionaryVariables.ContainsKey(dictionaryName))
-                return;   
-
-            DictionaryVariable dictionary = dictionaryVariables[dictionaryName];
-
-            if(!dictionary.items.ContainsKey(userId))
+            if(!DoesDictionaryVariableUserExist(dictionaryName, userId))
                 AddDictionaryVariable(dictionaryName, userId, value);
             else
                 UpdateDictionaryVariable(dictionaryName, userId, value);
@@ -74,6 +76,9 @@ namespace DataLayer{
 
         private static void UpdateDictionaryVariable(string dictionaryName, string userId, string value)
         {
+            if(!DoesDictionaryVariableUserExist(dictionaryName, userId))
+                return;
+
             dictionaryVariables[dictionaryName].items[userId] = value;
 
             DBManager.UpdateDictionaryEntry(dictionaryName, userId, value);
@@ -81,15 +86,10 @@ namespace DataLayer{
 
         public static void DeleteDictionaryVariable(string dictionaryName, string userId)
         {
-            if(!dictionaryVariables.ContainsKey(dictionaryName))
+            if(!DoesDictionaryVariableUserExist(dictionaryName, userId))
                 return;
 
-            DictionaryVariable dictionary = dictionaryVariables[dictionaryName];
-
-            if(!dictionary.items.ContainsKey(userId))
-                return;
-
-            dictionary.items.Remove(userId);
+            dictionaryVariables[dictionaryName].items.Remove(userId);
 
             DBManager.DeleteDictionaryEntry(dictionaryName, userId);
         }
@@ -130,18 +130,6 @@ namespace DataLayer{
                 case false:
 
                 break;
-            }
-        }
-
-        private class DictionaryVariable {
-            public Dictionary<string, string> items;
-            public int saveMethod;
-            public string startValue;
-
-            public DictionaryVariable(string start, int save){
-                startValue = start;
-                saveMethod = save;
-                items = new Dictionary<string, string>();
             }
         }
     }

@@ -44,14 +44,14 @@ namespace DataLayer{
             switch(modifier)
             {
                 case (int) IOReactionModifiers.CreateCSV:
-                    var csvMetadata = JsonConvert.DeserializeObject<CsvMetadataDBO>(value.ToString());
+                    var csvMetadata = JsonConvert.DeserializeObject<CsvMetadataDBO>(data.ToString());
                     UserVariablesSingleton.DumpToCSV(csvMetadata);
                     break;
 
                 case (int) IOReactionModifiers.SaveImage:
                     var fileMetadata = (Telegram.Bot.Types.File) msg.message;
                     
-                    var imageMetadata = JsonConvert.DeserializeObject<ImageMetadataDBO>(value.ToString());
+                    var imageMetadata = JsonConvert.DeserializeObject<ImageMetadataDBO>(data.ToString());
 
                     FileManager.DownloadAndSaveFile(fileMetadata.FilePath, $"{msg.senderId}{imageMetadata.suffix}.jpg", imageMetadata.subfolderName);
                     break;
@@ -61,7 +61,7 @@ namespace DataLayer{
         private void ParseDictionaryReaction(CommsLayerMessage clm)
         {
             var key = clm.senderId.ToString();
-            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(value.ToString());
+            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(data.ToString());
             switch(modifier)
             {
                 case (int) DictionaryVariableReactionModifiers.SavePresetValue:

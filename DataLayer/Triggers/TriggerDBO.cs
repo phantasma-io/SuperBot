@@ -24,7 +24,7 @@ namespace DataLayer
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public TriggerType triggerType {get;set;}
-        public object value {get;set;}
+        public object data {get;set;}
         
         public int modifier {get;set;}
         public string subgroup {get;set;}
