@@ -24,19 +24,22 @@ namespace MiddlemanLayer {
             if(triggerGroups == null)
                 LoadBehaviours();
 
-            var lastFailedGroup = new TriggerOutputMessage(null, null);
+            //var firstFailedGroup = new TriggerOutputMessage(null, null);
+            TriggerOutputMessage firstFailMsg = null;
             
             foreach(var keypair in triggerGroups)
             {
                 var triggerGroup = keypair.Value;
 
                 var groupOutput = triggerGroup.Eval(msg);
+                
                 if(groupOutput.result)
                     return new TriggerOutputMessage(keypair.Key, groupOutput);
-                else
-                    lastFailedGroup.Edit(keypair.Key, groupOutput);
+                
+                else if(firstFailMsg == null || (firstFailMsg != null && firstFailMsg.onFailMsg == null))
+                    firstFailMsg = new TriggerOutputMessage(keypair.Key, groupOutput);
             }
-            return lastFailedGroup;
+            return firstFailMsg;
         }
 
         /// <summary>

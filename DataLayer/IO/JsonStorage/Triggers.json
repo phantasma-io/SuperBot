@@ -51,7 +51,9 @@
                     "minSize": null,
                     "maxSize": 15.6
                 },
-                "subgroup": "2"
+                "subgroup": "2",
+
+                "onFailMsg": "Picture size too big, asshole"
                 
             }
         ]
@@ -103,7 +105,9 @@
                 "triggerType": "Text",
                 "value": "\\S*@\\S*",
                 "modifier": 0,
-                "subgroup": "2"
+                "subgroup": "2",
+
+                "onFailMsg": "I said I want an EMAIL, you crypto monkey. That doesn't look like one."
             }
         ]
     },
