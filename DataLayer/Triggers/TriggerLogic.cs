@@ -79,16 +79,20 @@ namespace DataLayer
 
             switch(modifier)
             {
-                case (int) SingleVariableTriggerModifiers.MatchValues:
+                case (int) SingleVariableTriggerModifiers.MatchPresetToValue:
                     variableName = dv.variable;
                     value = dv.value;
 
                     return UserVariablesSingleton.DoesSingleVariableMatch(variableName, value);
 
-                case (int) SingleVariableTriggerModifiers.VariableExists:
+                case (int) SingleVariableTriggerModifiers.MatchMessageToValue:
+                    if(msg.type != CommsLayerMessage.Type.Text)
+                        return false;
+
                     variableName = dv.variable;
-                    
-                    return UserVariablesSingleton.DoesSingleVariableExist(variableName);
+                    value = msg.message.ToString();
+
+                    return UserVariablesSingleton.DoesSingleVariableMatch(variableName, value);
 
                 default:
                     return false;
@@ -102,7 +106,17 @@ namespace DataLayer
 
             switch(modifier)
             {
-                case (int) DictionaryVariableTriggerModifiers.MatchValues:
+                case (int) DictionaryVariableTriggerModifiers.MatchMessageToValue:
+                    if(msg.type != CommsLayerMessage.Type.Text)
+                        return false;
+
+                    dictionaryName = dv.variable;
+                    userId = msg.senderId.ToString();
+                    value = msg.message.ToString();
+
+                    return UserVariablesSingleton.DoesDictionaryVariableMatch(dictionaryName, userId, value);
+
+                case (int) DictionaryVariableTriggerModifiers.MatchPresetToValue:
                     dictionaryName = dv.variable;
                     userId = msg.senderId.ToString();
                     value = dv.value;

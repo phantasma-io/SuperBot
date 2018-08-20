@@ -25,10 +25,10 @@ A _Trigger_ is defined as follows:
 ```json
 {
     "triggerType": "TriggerTypeEnum",
-    "data": object,
+    "data": object, (based on the corresponding modifier enum for the given trigger type)
     "modifier": int,
-    "subgroup": null/"string",
-    "onFailMsg": "string" (optional)
+    "subgroup": null/string,
+    "onFailMsg": null/string
 }
 ```
 
@@ -65,7 +65,7 @@ Text Trigger Modifier | Meaning
 
  Image Trigger Modifier | Meaning
 ---------|----------
- 0 | Checks if the data sent by the user is an image within a specified size (up to a maximum of 20MB due to telegram limitations)
+ 0 | Checks if the data sent by the user is an image within a specified size (note to users: telegram only supports images up to 20MB)
 
 ### Trigger Groups and Sub-groups
 
@@ -77,23 +77,13 @@ Each trigger has a group and a sub-group.
         "privateTrigger": true,
         "triggers": [
             {
-                "triggerType": 0,
-                "value": "abc",
-                "modifier": 0,
-                "subgroup": null
+                "triggerType": "TriggerTypeEnum",
+                "modifier": int,
+                "data": object,
+                "subgroup": null/string,
+                "onFailMsg": null/string
             },
-            {
-                "triggerType": 0,
-                "value": "zxy",
-                "modifier": 0,
-                "subgroup": "sub"
-            },
-            {
-                "triggerType": 0,
-                "value": "g",
-                "modifier": 0,
-                "subgroup": "sub"
-            }
+            ...
         ]
     }
 }
@@ -174,7 +164,7 @@ A _Reaction_ is defined as follows:
     "reactionType": "ReactionTypeEnum",
     "modifier": int,
     "data": object,
-    "subgroup": null/"string"
+    "subgroup": null/string
 }
 ```
 
@@ -255,10 +245,15 @@ When "subgroup" is null, a random GUID is assigned as the subgroup name, turning
 
 ```json
 {
-    "variable name": {
-        "saveToDisk": bool,
-        "isDictionary": bool
-    }
+    "variables": [
+        {
+            "variableName": "name",
+            "saveToDisk": bool,
+            "isDictionary": bool,
+            "value": null/"value"
+        },
+        ...
+    ]
 }
 ```
 
@@ -282,4 +277,4 @@ por isso, nós não passamos a key para um reaction type 2, porque vamos simples
 
 ### Single User Variables
 
-If saveToDisk is true, not only will it save any changes of the variable's value to the database, but everytime the bot restarts it will also attempt to overwrite the start value defined in JSON with any value stored on the database!
+If saveToDisk is true, not only will it save any changes of the variable's value to the database, but everytime the bot restarts it will also attempt to overwrite the start value defined in JSON (if it is defined) with any value stored on the database!

@@ -16,12 +16,13 @@ namespace DataLayer {
     }
 
     public enum SingleVariableTriggerModifiers {
-        MatchValues,
-        VariableExists
+        MatchMessageToValue,
+        MatchPresetToValue,     //since variables of this type have to be declared beforehand on the JSON file, makes no sense to add "KeyExists"
     }
 
     public enum DictionaryVariableTriggerModifiers {
-        MatchValues,
+        MatchMessageToValue,
+        MatchPresetToValue,
         KeyExists
     }
 
