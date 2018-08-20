@@ -2,45 +2,39 @@
     "variables": [
         {
             "name": "bot state",
-            "saveMethod": -1,
+            "saveToDisk": false,
             "isDictionary": false,
-            "startValue": ""
+            "value": "idle"
         },
         {
             "name": "kyc status",
-            "saveMethod": 0,
-            "isDictionary": true,
-            "startValue": ""
+            "saveToDisk": true,
+            "isDictionary": true
         },
         {
             "name": "kyc wallet",
-            "saveMethod": 0,
-            "isDictionary": true,
-            "startValue": ""
+            "saveToDisk": true,
+            "isDictionary": true
         },
         {
             "name": "whitelist email",
-            "saveMethod": 0,
-            "isDictionary": true,
-            "startValue": ""
+            "saveToDisk": true,
+            "isDictionary": true
         },
         {
             "name": "whitelist address",
-            "saveMethod": 0,
-            "isDictionary": true,
-            "startValue": ""
+            "saveToDisk": true,
+            "isDictionary": true
         },
         {
             "name": "whitelist name",
-            "saveMethod": 0,
-            "isDictionary": true,
-            "startValue": ""
+            "saveToDisk": true,
+            "isDictionary": true
         },
         {
             "name": "whitelist status",
-            "saveMethod": 0,
-            "isDictionary": true,
-            "startValue": ""
+            "saveToDisk": true,
+            "isDictionary": true
         }
     ]
 }

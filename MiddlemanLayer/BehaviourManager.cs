@@ -78,7 +78,7 @@ namespace MiddlemanLayer {
         private void LoadUserVariables()
         {
             string json = FileManager.ReadJsonToString(FileManager.Location.UserVariablesList);
-            var variables = JsonConvert.DeserializeObject<Dictionary<string, List<UserVariable>>>(json);
+            var variables = JsonConvert.DeserializeObject<Dictionary<string, List<UserVariableDBO>>>(json);
 
             UserVariablesSingleton.LoadUserVariables(variables.ElementAt(0).Value);
         }

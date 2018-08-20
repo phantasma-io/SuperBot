@@ -6,7 +6,7 @@ namespace DataLayer {
         /// This trigger can only be triggered by a text message that matches at least /// once with a Regex query.
         /// </summary>
         Text,
-        GlobalVariable,
+        SingleVariable,
         DictionaryVariable,
         Image,
     }
@@ -15,8 +15,9 @@ namespace DataLayer {
         Contains
     }
 
-    public enum GlobalVariableTriggerModifiers {
-        MatchValues
+    public enum SingleVariableTriggerModifiers {
+        MatchValues,
+        VariableExists
     }
 
     public enum DictionaryVariableTriggerModifiers {

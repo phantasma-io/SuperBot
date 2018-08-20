@@ -1,4 +1,22 @@
 {
+    "bot state": {
+        "privateTrigger": true,
+        "triggers": [
+            {
+                "triggerType": "SingleVariable",
+                "data": {
+                    "variable": "bot state",
+                    "value": "idle"
+                },
+                "modifier": 0
+            },
+            {
+                "triggerType": "Text",
+                "data": "/state",
+                "modifier": 0
+            }
+        ]
+    },
     "kyc start": {
         "privateTrigger": true,
         "triggers": [

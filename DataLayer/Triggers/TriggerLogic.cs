@@ -35,6 +35,9 @@ namespace DataLayer
                 case TriggerType.DictionaryVariable:                     
                     return ParseDictionaryTrigger(msg);
 
+                case TriggerType.SingleVariable:
+                    return ParseVariableTrigger(msg);
+
                 case TriggerType.Image:
                     return ParseImageTrigger(msg);
 
@@ -69,9 +72,32 @@ namespace DataLayer
             }
         }
 
+        private bool ParseVariableTrigger(CommsLayerMessage msg)
+        {
+            var dv = JsonConvert.DeserializeObject<VariableDataDBO>(data.ToString());
+            string variableName, value;
+
+            switch(modifier)
+            {
+                case (int) SingleVariableTriggerModifiers.MatchValues:
+                    variableName = dv.variable;
+                    value = dv.value;
+
+                    return UserVariablesSingleton.DoesSingleVariableMatch(variableName, value);
+
+                case (int) SingleVariableTriggerModifiers.VariableExists:
+                    variableName = dv.variable;
+                    
+                    return UserVariablesSingleton.DoesSingleVariableExist(variableName);
+
+                default:
+                    return false;
+            }
+        }
+
         private bool ParseDictionaryTrigger(CommsLayerMessage msg)
         {
-            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(data.ToString());
+            var dv = JsonConvert.DeserializeObject<VariableDataDBO>(data.ToString());
             string dictionaryName, userId, value;
 
             switch(modifier)
@@ -165,6 +191,9 @@ namespace DataLayer
             if (subgroups == null)
                 AssembleSubgroups();
 
+            if(msg.isPrivateChat != privateTrigger)
+                return new TriggerOutput(false, null);
+
             var groupOutput = new TriggerOutput(true, null);
 
             foreach (var keypair in subgroups)
@@ -189,6 +218,9 @@ namespace DataLayer
             {
                 var key = trigger.subgroup;
 
+                if(key == null)
+                    key = Guid.NewGuid().ToString();
+
                 if (subgroups.ContainsKey(key) == false)
                     subgroups.Add(key, new TriggerSubgroup());
 
@@ -199,5 +231,4 @@ namespace DataLayer
             }
         }
     }
-
 }

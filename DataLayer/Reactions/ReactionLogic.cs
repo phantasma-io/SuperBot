@@ -61,11 +61,11 @@ namespace DataLayer{
         private void ParseDictionaryReaction(CommsLayerMessage clm)
         {
             var key = clm.senderId.ToString();
-            var dv = JsonConvert.DeserializeObject<DictionaryVariableDBO>(data.ToString());
+            var dv = JsonConvert.DeserializeObject<VariableDataDBO>(data.ToString());
             switch(modifier)
             {
                 case (int) DictionaryVariableReactionModifiers.SavePresetValue:
-                    UserVariablesSingleton.SetDictionaryVariable(dv.variable, key, dv.value);
+                    UserVariablesSingleton.SetDictionaryVariableItem(dv.variable, key, dv.value);
                 break;
 
                 case (int) DictionaryVariableReactionModifiers.SaveUserMessage:
@@ -73,7 +73,7 @@ namespace DataLayer{
                     if(clm.type != CommsLayerMessage.Type.Text)
                         return;
                         
-                    UserVariablesSingleton.SetDictionaryVariable(dv.variable, key, (string) clm.message);
+                    UserVariablesSingleton.SetDictionaryVariableItem(dv.variable, key, (string) clm.message);
                 break;
 
                 case (int) DictionaryVariableReactionModifiers.DeleteEntry:
@@ -152,6 +152,9 @@ namespace DataLayer{
             foreach (var reaction in reactions)
             {
                 var key = reaction.subgroup;
+
+                if(key == null)
+                    key = Guid.NewGuid().ToString();
 
                 if (subgroups.ContainsKey(key) == false)
                     subgroups.Add(key, new ReactionSubgroup());

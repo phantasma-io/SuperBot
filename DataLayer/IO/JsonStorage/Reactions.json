@@ -1,4 +1,13 @@
 {
+    "bot state": {
+        "reactions": [
+            {
+                "reactionType": "Text",
+                "modifier": 0,
+                "data": "Bot state is idle"
+            }
+        ]
+    },
     "kyc start": {
         "reactions": [
             {
@@ -200,7 +209,7 @@
                 "modifier": 0,
                 "data": {
                     "areDictionaries": true,
-                    "columns":["whitelist email", "whitelist address", "whitelist name", "whitelist status"],
+                    "variableNames":["whitelist email", "whitelist address", "whitelist name", "whitelist status"],
                     "filename": "whitelist"
                 },
                 "subgroup":"2"

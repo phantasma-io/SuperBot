@@ -99,12 +99,14 @@ namespace CommsLayer
                 if(message == null)
                     return;
 
-                var commsMsg = new CommsLayerMessage(message, messageType, userId, chatId);
+                bool isPrivateChat = telegramMessage.Chat.Type == ChatType.Private;
+
+                var commsMsg = new CommsLayerMessage(message, messageType, userId, chatId, isPrivateChat);
                 var triggerOutput = behaviourManager.EvaluateTriggers(commsMsg);
 
                 if(triggerOutput.result)
                 {
-                    Console.WriteLine($"{telegramMessage.From.Username}: {triggerOutput.triggerName}");
+                    Console.WriteLine($"{telegramMessage.From.Username}: {triggerOutput.triggerName}");      
 
                     var reactionOutputMessages = behaviourManager.ApplyReactions(triggerOutput.triggerName, commsMsg);
 

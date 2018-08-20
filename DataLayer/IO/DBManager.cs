@@ -12,40 +12,38 @@ namespace DataLayer
         private const string dbPassword = "Alcapone3";
         private const string dbSchema = "botdev";
 
+        private const string svTableName = "singlevar_table";
+        private const string svNameColumn = "var_name";
+
         private const string dvTableName = "dictionaryvar_table";
         private const string dictionaryNameColumn = "dictionary_name";
         private const string userIdColumn = "user_id";
+        
         private const string valueColumn = "value";
 
         private static string dbConnectionString => $"server={dbServer};userid={dbUser};password={dbPassword};database={dbSchema}";
         private static MySqlConnection connection = null;
 
-        public static bool TryInitDB()
+        public static void TryInitDB()
         {
-            try
-            {
-                OpenConnection();
+            //create dictionaryVariable sql table
+            string query = $@"CREATE TABLE IF NOT EXISTS {dvTableName}(
+                            {dictionaryNameColumn} VARCHAR(300) NOT NULL,
+                            {userIdColumn} VARCHAR(300) NOT NULL,
+                            {valueColumn} VARCHAR(10000) NULL,
+                            PRIMARY KEY ({dictionaryNameColumn}, {userIdColumn})
+                            ) CHARACTER SET utf8";
+                
+            RunNonQuery(query);
 
-                //create dictionaryVariable sql table
-                string query = $@"CREATE TABLE IF NOT EXISTS {dvTableName}(
-                                {dictionaryNameColumn} VARCHAR(300) NOT NULL,
-                                {userIdColumn} VARCHAR(300) NOT NULL,
-                                {valueColumn} VARCHAR(10000) NULL,
-                                PRIMARY KEY ({dictionaryNameColumn}, {userIdColumn})
-                                ) CHARACTER SET utf8";
-                
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                cmd.ExecuteNonQuery();
-                
-                CloseConnection();
-                return true;
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: {0}",  ex.ToString());
-                CloseConnection();
-                return false;
-            }
+            //create singleVariable sql table
+            query = $@"CREATE TABLE IF NOT EXISTS {svTableName}(
+                            {svNameColumn} VARCHAR(300) NOT NULL,
+                            {valueColumn} VARCHAR(10000) NULL,
+                            PRIMARY KEY ({svNameColumn})
+                            ) CHARACTER SET utf8";
+
+            RunNonQuery(query);
             
         }
 
@@ -60,13 +58,125 @@ namespace DataLayer
             return false;
         } */
 
+        public static bool DeleteSingleEntry(string name)
+        {
+            string query = $@"DELETE FROM {svTableName}";
+            query += BuildQueryFilter(name, null);
+            return RunNonQuery(query);
+        }
+
         public static bool DeleteDictionaryEntry(string dictionaryName, string userId) {
+            string query = $@"DELETE FROM {dvTableName}";
+            query += BuildQueryFilter(dictionaryName, userId, null);
+            return RunNonQuery(query);
+        }
+
+        /// <summary>
+        /// When a param is null, selects any value of the corresponding column
+        /// </summary>
+        /// <param name="dictionaryName"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static Dictionary<string, Dictionary<string, string>> SelectDictionaryVariables(string dictionaryName = null, string userId = null, string value = null) {
+            var output = new Dictionary<string, Dictionary<string, string>>();
+
+            string query = $@"SELECT * FROM {dvTableName}";
+            query += BuildQueryFilter(dictionaryName, userId, value);
+            query+= ";";
+
+            var reader = RunReader(query);
+
+            while(reader != null && reader.Read())
+            {
+                var dictName = reader[dictionaryNameColumn].ToString();
+                var user = reader[userIdColumn].ToString();
+                var val = reader[valueColumn].ToString();
+                
+                if(!output.ContainsKey(dictName))
+                    output.Add(dictName, new Dictionary<string, string>());
+
+                output[dictName].Add(user, val);
+            }
+
+            CloseConnection();
+
+            return output;           
+        }
+
+        public static Dictionary<string, string> SelectSingleVariables(string variableName = null, string value = null)
+        {
+            var output = new Dictionary<string, string>();
+
+            string query = $@"SELECT * FROM {svTableName}";
+            query += BuildQueryFilter(variableName, value);
+            query += ";";
+
+            var reader = RunReader(query);
+
+            while(reader != null && reader.Read())
+            {
+                var varName = reader[svTableName].ToString();
+                var val = reader[valueColumn].ToString();
+
+                output.Add(varName, val);
+            }
+
+            CloseConnection();
+
+            return output;
+        }
+
+        public static int CountDictionaryVariable(string dictionaryName = null, string userId = null, string value = null)
+        {
+            string query = $@"SELECT Count(*) FROM {dvTableName}";
+            query += BuildQueryFilter(dictionaryName, userId, value);
+            query += ";";
+
+            return RunScalar(query);
+        }
+
+        public static bool InsertSingleEntry(string variableName, string value)
+        {
+            string query = $@"INSERT INTO {svTableName} ({svNameColumn}, {valueColumn})
+                            VALUES ('{variableName}','{value}')";
+
+            return RunNonQuery(query);
+        }
+
+        public static bool InsertDictionaryEntry(string dictionaryName, string userId, string value) 
+        {
+            string query = $@"INSERT INTO {dvTableName} ({dictionaryNameColumn}, {userIdColumn}, {valueColumn})
+                            VALUES ('{dictionaryName}','{userId}','{value}')";
+
+            return RunNonQuery(query);
+        }
+
+        public static bool UpdateSingleEntry(string variableName, string value)
+        {
+            string query = $@"UPDATE {dvTableName} SET {valueColumn}='{value}'";
+            query += BuildQueryFilter(variableName, value);
+            query+= ";";
+
+            return RunNonQuery(query);
+        }
+
+        public static bool UpdateDictionaryEntry(string dictionaryName, string userId, string value)
+        {
+            string query = $@"UPDATE {dvTableName} SET {valueColumn}='{value}'";
+            query += BuildQueryFilter(dictionaryName, userId, null);
+            query+= ";";
+
+            return RunNonQuery(query);
+        }
+
+        private static bool RunNonQuery(string query)
+        {
             try
             {
                 OpenConnection();
-                
-                string query = $@"DELETE FROM {dvTableName} WHERE {dictionaryNameColumn}='{dictionaryName} AND {userIdColumn}='{userId};";
+    
                 var cmd = new MySqlCommand(query, connection);
+
                 cmd.ExecuteNonQuery();
 
                 CloseConnection();
@@ -80,59 +190,32 @@ namespace DataLayer
             }
         }
 
-        /// <summary>
-        /// When a param is null, selects any value of the corresponding column
-        /// </summary>
-        /// <param name="dictionaryName"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public static Dictionary<string, Dictionary<string, string>> SelectDictionaryVariables(string dictionaryName = null, string userId = null) {
-            var output = new Dictionary<string, Dictionary<string, string>>();
-
+        private static MySqlDataReader RunReader(string query)
+        {
             try
             {
                 OpenConnection();
 
-                string query = $@"SELECT * FROM {dvTableName}";
-                query += BuildQueryFilter(dictionaryName, userId);
-                query+= ";";
-                
                 var cmd = new MySqlCommand(query,connection);
                 var reader = cmd.ExecuteReader();
 
-                while(reader.Read())
-                {
-                    var dictName = reader[dictionaryNameColumn].ToString();
-                    var user = reader[userIdColumn].ToString();
-                    var value = reader[valueColumn].ToString();
-                    
-                    if(!output.ContainsKey(dictName))
-                        output.Add(dictName, new Dictionary<string, string>());
-
-                    output[dictName].Add(user, value);
-                }
-
-                CloseConnection();
-                return output;
+                //CloseConnection();    //connection must be closed manually after reader is used, or it won't be readable
+                return reader;
             }
             catch (MySqlException ex)
             {
                 Console.WriteLine("Error: {0}",  ex.ToString());
                 CloseConnection();
-                return output;
+                return null;
             }
         }
 
-        public static int CountDictionaryVariable(string dictionaryName = null, string userId = null, string value = null)
+        private static int RunScalar(string query)
         {
             int count = 0;
             try
             {
                 OpenConnection();
-
-                string query = $@"SELECT Count(*) FROM {dvTableName}";
-                query += BuildQueryFilter(dictionaryName, userId, value);
-                query += ";";
 
                 var cmd = new MySqlCommand(query, connection);
                 count = (int) cmd.ExecuteScalar();
@@ -148,52 +231,61 @@ namespace DataLayer
             }
         }
 
-        public static bool InsertDictionaryEntry(string dictionaryName, string userId, string value) 
-        {
+        private static bool OpenConnection(){
             try
             {
-                OpenConnection();
-                
-                string query = $@"INSERT INTO {dvTableName} ({dictionaryNameColumn}, {userIdColumn}, {valueColumn})
-                                VALUES ('{dictionaryName}','{userId}','{value}')";
-    
-                var cmd = new MySqlCommand(query, connection);
-
-                cmd.ExecuteNonQuery();
-
-                CloseConnection();
+                connection = new MySqlConnection(dbConnectionString);
+                connection.Open();
                 return true;
             }
             catch (MySqlException ex)
             {
                 Console.WriteLine("Error: {0}",  ex.ToString());
-                CloseConnection();
-                return false;
+                throw;
             }
         }
 
-        public static bool UpdateDictionaryEntry(string dictionaryName, string userId, string value)
-        {
+        private static bool CloseConnection() {
             try
             {
-                OpenConnection();
+                if(connection.State == ConnectionState.Open)
+                    connection.Close();
                 
-                string query = $@"UPDATE {dvTableName} SET {valueColumn}='{value}'
-                                  WHERE {dictionaryNameColumn}='{dictionaryName}' AND {userIdColumn}='{userId}'";
-    
-                var cmd = new MySqlCommand(query, connection);
-
-                cmd.ExecuteNonQuery();
-
-                CloseConnection();
                 return true;
             }
             catch (MySqlException ex)
             {
                 Console.WriteLine("Error: {0}",  ex.ToString());
-                CloseConnection();
-                return false;
+                throw;
             }
+        }
+
+        
+        private static string BuildQueryFilter(string singleVariableName = null, string value = null)
+        {
+            string output = "";
+            List<string> conditions = new List<string>();
+
+            if (singleVariableName != null || value != null)
+            {
+                output += " WHERE ";
+
+                if (singleVariableName != null)
+                    conditions.Add($@"{svNameColumn}='{singleVariableName}'");
+
+                if (value != null)
+                    conditions.Add($@"{valueColumn}='{value}'");
+            }
+
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                if (i > 0)
+                    output += " AND ";
+
+                output += conditions[i];
+            }
+
+            return output;
         }
 
         private static string BuildQueryFilter(string dictionaryName = null, string userId = null, string value = null)
@@ -224,35 +316,6 @@ namespace DataLayer
             }
 
             return output;
-        }
-
-        private static bool OpenConnection(){
-            try
-            {
-                connection = new MySqlConnection(dbConnectionString);
-                connection.Open();
-                return true;
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: {0}",  ex.ToString());
-                throw;
-            }
-        }
-
-        private static bool CloseConnection() {
-            try
-            {
-                if(connection.State == ConnectionState.Open)
-                    connection.Close();
-                
-                return true;
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: {0}",  ex.ToString());
-                throw;
-            }
         }
 
     }

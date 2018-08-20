@@ -29,7 +29,7 @@ namespace DataLayer{
     //for the csv file reaction
     public partial class CsvMetadataDBO {
         public bool areDictionaries { get;set; }
-        public List<string> columns { get; set; }
+        public List<string> variableNames { get; set; }
         public string filename { get; set; }
     }
 

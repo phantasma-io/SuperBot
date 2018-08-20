@@ -17,12 +17,14 @@ namespace MiddlemanLayer {
         readonly public Type type;
         readonly public long senderId;
         readonly public long chatId;
+        readonly public bool isPrivateChat;
 
-        public CommsLayerMessage(object  msg, Type type, long senderId, long chatId){
+        public CommsLayerMessage(object  msg, Type type, long senderId, long chatId, bool isPrivate){
             this.message= msg;
             this.type = type;
             this.senderId = senderId;
             this.chatId = chatId;
+            isPrivateChat = isPrivate;
         }
     }
 
